@@ -83,7 +83,9 @@ const LoginPage = ({ theme }) => {
   const setLocale = useSetLocale();
   const translate = useTranslate();
   const base_url = localStorage.getItem("base_url");
-  const cfg_base_url = process.env.REACT_APP_SERVER;
+  const params = new URLSearchParams(window.location.search);
+  const cfg_base_url =
+    process.env.REACT_APP_SERVER || params.get("homeserver_url");
   const [ssoBaseUrl, setSSOBaseUrl] = useState("");
   const loginToken = /\?loginToken=([a-zA-Z0-9_-]+)/.exec(window.location.href);
 
