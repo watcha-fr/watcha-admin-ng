@@ -178,11 +178,25 @@ const LoginPage = ({ theme }) => {
 
   const handleSSO = () => {
     localStorage.setItem("sso_base_url", ssoBaseUrl);
+    const redirectUrl = new URL(window.location.href);
+    redirectUrl.search = "";
     const ssoFullUrl = `${ssoBaseUrl}/_matrix/client/r0/login/sso/redirect?redirectUrl=${encodeURIComponent(
-      window.location.href
+      redirectUrl
     )}`;
     window.location.href = ssoFullUrl;
   };
+
+  useEffect(() => {
+    if (
+      ssoBaseUrl &&
+      params.get("homeserver_url") &&
+      params.get("no_auto_redirect") !== "1" &&
+      !loading
+    ) {
+      setLoading(true);
+      handleSSO();
+    }
+  }, [ssoBaseUrl, loading]);
 
   const extractHomeServer = username => {
     const usernameRegex = /@[a-zA-Z0-9._=\-/]+:([a-zA-Z0-9\-.]+\.[a-zA-Z]+)/;

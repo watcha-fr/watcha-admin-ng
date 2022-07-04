@@ -80,9 +80,12 @@ const authProvider = {
   checkAuth: () => {
     const access_token = localStorage.getItem("access_token");
     console.log("checkAuth " + access_token);
-    return typeof access_token === "string"
-      ? Promise.resolve()
-      : Promise.reject();
+    if (typeof access_token === "string") {
+      window.location.search = "";
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
   },
   // called when the user navigates to a new location, to check for permissions / roles
   getPermissions: () => Promise.resolve(),
