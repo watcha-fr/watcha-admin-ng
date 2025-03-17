@@ -90,6 +90,7 @@ const App = () => (
     <Resource name="servernotices" />
     <Resource name="forward_extremities" />
     <Resource name="room_state" />
+    <Resource name="dashboard" />
   </Admin>
 );
 
