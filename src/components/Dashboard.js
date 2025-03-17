@@ -12,7 +12,7 @@ const Dashboard = () => {
 
     const fetchMetrics = async () => {
         try {
-            const response = await dataProvider.getList('metrics', {
+            const response = await dataProvider.getList('watcha_admin_stats', {
                 pagination: { page: 1, perPage: 10 },
                 sort: { field: 'date', order: 'ASC' },
                 filter: {},
