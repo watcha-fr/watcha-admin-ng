@@ -6,6 +6,7 @@ import dataProvider from "./synapse/dataProvider";
 import { UserList, UserCreate, UserEdit } from "./components/users";
 import { RoomList, RoomShow } from "./components/rooms";
 import { ReportList, ReportShow } from "./components/EventReports";
+import DashboardTab from "./components/DashboardTab";
 import LoginPage from "./components/LoginPage";
 import UserIcon from "@material-ui/icons/Group";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
@@ -90,7 +91,10 @@ const App = () => (
     <Resource name="servernotices" />
     <Resource name="forward_extremities" />
     <Resource name="room_state" />
-    <Resource name="dashboard" />
+    <Resource
+      name="dashboard"
+      list={DashboardTab} // <= Ça permet de lier la route /dashboard au composant
+    />
   </Admin>
 );
 
