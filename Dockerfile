@@ -8,6 +8,7 @@ WORKDIR /src
 
 COPY . /src
 RUN yarn --network-timeout=100000 install
+ENV NODE_OPTIONS="--openssl-legacy-provider"
 RUN PUBLIC_URL=$PUBLIC_URL REACT_APP_SERVER=$REACT_APP_SERVER yarn build
 
 
