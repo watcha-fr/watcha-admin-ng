@@ -95,6 +95,10 @@ const App = () => (
       name="dashboard"
       list={DashboardTab} // <= Ça permet de lier la route /dashboard au composant
     />
+    <Resource
+      name="dashboard_all"
+      list={DashboardAllTab} // <= Ça permet de lier la route /dashboard au composant
+    />
   </Admin>
 );
 
