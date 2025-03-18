@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const DashboardTab = () => {
-    const [data, setData] = useState(null);
-
-    useEffect(() => {
-        // Exemple de fetch des données
-        fetch('/watcha_admin_stats')
-            .then(response => response.json())
-            .then(data => setData(data))
-            .catch(err => console.error("Failed to load dashboard data", err));
-    }, []);
-
-    if (!data) {
-        return <div>Loading...</div>;
-    }
+    const homeserver = localStorage.getItem("base_url");
+    const grafana = homeserver.replace("-core","-dashboard")
+    const grafanaUrl = "https://"+grafana+"/d/000000012/synapse?orgId=1"; // Remplace avec ton URL Grafana
 
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+        <div style={{ height: "100vh", width: "100%" }}>
+            <iframe
+                src={grafanaUrl}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allowFullScreen
+            />
         </div>
     );
 };
+
 
 export default DashboardTab;
