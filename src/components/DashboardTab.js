@@ -1,4 +1,5 @@
 import React from "react";
+import { Card, CardContent, Typography } from "@material-ui/core";
 
 const DashboardTab = () => {
     const homeserver = localStorage.getItem("base_url");
