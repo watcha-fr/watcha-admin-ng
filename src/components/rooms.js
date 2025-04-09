@@ -110,6 +110,7 @@ const RoomShowActions = ({ basePath, data, resource }) => {
 
   return (
     <TopToolbar>
+      <RoomDirectoryJoinButton record={data}/>
       {roomDirectoryStatus === false && (
         <RoomDirectorySaveButton record={data} />
       )}
@@ -309,7 +310,6 @@ export const RoomShow = props => {
 
 const RoomBulkActionButtons = props => (
   <Fragment>
-    <RoomDirectoryJoinButton {...props} />
     <RoomDirectoryBulkSaveButton {...props} />
     <RoomDirectoryBulkDeleteButton {...props} />
     <BulkDeleteButton
