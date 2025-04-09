@@ -35,6 +35,7 @@ import ViewListIcon from "@material-ui/icons/ViewList";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EventIcon from "@material-ui/icons/Event";
 import {
+  RoomDirectoryJoinButton,
   RoomDirectoryBulkDeleteButton,
   RoomDirectoryBulkSaveButton,
   RoomDirectoryDeleteButton,
@@ -308,6 +309,7 @@ export const RoomShow = props => {
 
 const RoomBulkActionButtons = props => (
   <Fragment>
+    <RoomDirectoryJoinButton {...props} />
     <RoomDirectoryBulkSaveButton {...props} />
     <RoomDirectoryBulkDeleteButton {...props} />
     <BulkDeleteButton

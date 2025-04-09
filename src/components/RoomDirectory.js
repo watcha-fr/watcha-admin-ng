@@ -172,37 +172,30 @@ const RoomDirectoryFilter = ({ ...props }) => {
   );
 };
 
-const JoinRoomButton = ({ record }) => {
+export const RoomDirectoryJoinButton = ({ record }) => {
   const notify = useNotify();
   const refresh = useRefresh();
-  const [joinRoom, { loading }] = useMutation();
+  const [create, { loading }] = useCreate("join_room"); // nom du endpoint
 
   const handleJoin = () => {
-    // Appelle ton API backend personnalisée ou l'endpoint Matrix directement si exposé
-    joinRoom(
+    create(
       {
-        type: 'create',
-        resource: 'join_room', // ça doit correspondre à un endpoint de ton dataProvider
         payload: { data: { room_id: record.room_id } },
       },
       {
         onSuccess: () => {
-          notify('Vous avez rejoint le salon !');
+          notify("Vous avez rejoint le salon !");
           refresh();
         },
         onFailure: () => {
-          notify("Échec de la tentative de rejoindre le salon", 'warning');
+          notify("Échec lors de la tentative de rejoindre le salon", "warning");
         },
       }
     );
   };
 
   return (
-    <Button
-      label="Rejoindre"
-      onClick={handleJoin}
-      disabled={loading}
-    >
+    <Button label="Rejoindre" onClick={handleJoin} disabled={loading}>
       <MeetingRoomIcon />
     </Button>
   );
@@ -276,7 +269,6 @@ export const FilterableRoomDirectoryList = ({
           sortable={false}
           label={translate("resources.room_directory.fields.guest_can_join")}
         />
-        <JoinRoomButton />
       </Datagrid>
     </List>
   );
