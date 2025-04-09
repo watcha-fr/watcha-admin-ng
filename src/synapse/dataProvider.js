@@ -300,6 +300,14 @@ const resourceMap = {
       endpoint: `/_synapse/admin/v1/registration_tokens/${params.id}`,
     }),
   },
+  join_room: {
+    create: ({ room_id, user_id }) => ({
+      endpoint: `/_synapse/admin/v1/join/${encodeURIComponent(room_id)}`,
+      method: "POST",
+      body: { user_id },
+    }),
+  },
+  
 };
 
 function filterNullValues(key, value) {

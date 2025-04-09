@@ -176,19 +176,23 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const notify = useNotify();
   const refresh = useRefresh();
   const [create, { loading }] = useCreate("join_room"); // nom du endpoint
+  const user_id = localStorage.getItem("user_id");
 
   const handleJoin = () => {
     create(
       {
-        payload: { data: { room_id: record.room_id } },
+        data: {
+          room_id: record.room_id,
+          user_id: user_id,
+        },
       },
       {
         onSuccess: () => {
-          notify("Vous avez rejoint le salon !");
+          notify("Salon rejoint !");
           refresh();
         },
-        onFailure: () => {
-          notify("Échec lors de la tentative de rejoindre le salon", "warning");
+        onFailure: (error) => {
+          notify("Erreur lors de la tentative de rejoindre", "warning");
         },
       }
     );
