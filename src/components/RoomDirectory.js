@@ -176,15 +176,11 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const notify = useNotify();
   const refresh = useRefresh();
   const [create, { loading }] = useCreate("join_room"); // nom du endpoint
-  const user_id = localStorage.getItem("user_id");
 
   const handleJoin = () => {
     create(
       {
-        data: {
-          room_id: record.id,
-          user_id: user_id,
-        },
+        payload: { data: { id: record.id } },
       },
       {
         onSuccess: () => {

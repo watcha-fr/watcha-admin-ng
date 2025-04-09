@@ -301,10 +301,10 @@ const resourceMap = {
     }),
   },
   join_room: {
-    create: ({ room_id, user_id }) => ({
-      endpoint: `/_synapse/admin/v1/join/${encodeURIComponent(room_id)}`,
+    create: params => ({
+      endpoint: `/_synapse/admin/v1/join/${params.id}`,
       method: "POST",
-      body: { user_id },
+      body: { user_id: localStorage.getItem("user_id")  },
     }),
   },
   
