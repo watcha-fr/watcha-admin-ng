@@ -182,7 +182,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
     create(
       {
         data: {
-          room_id: record.room_id,
+          room_id: record.id,
           user_id: user_id,
         },
       },
