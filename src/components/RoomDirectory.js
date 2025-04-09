@@ -3,6 +3,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Chip } from "@material-ui/core";
 import { connect } from "react-redux";
 import FolderSharedIcon from "@material-ui/icons/FolderShared";
+import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   BooleanField,
