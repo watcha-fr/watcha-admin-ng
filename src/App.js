@@ -7,7 +7,6 @@ import { UserList, UserCreate, UserEdit } from "./components/users";
 import { RoomList, RoomShow } from "./components/rooms";
 import { ReportList, ReportShow } from "./components/EventReports";
 import DashboardTab from "./components/DashboardTab";
-import DashboardAllTab from "./components/DashboardAllTab";
 import LoginPage from "./components/LoginPage";
 import UserIcon from "@material-ui/icons/Group";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
@@ -95,10 +94,6 @@ const App = () => (
     <Resource
       name="dashboard"
       list={DashboardTab} // <= Ça permet de lier la route /dashboard au composant
-    />
-    <Resource
-      name="dashboard_all"
-      list={DashboardAllTab} // <= Ça permet de lier la route /dashboard au composant
     />
   </Admin>
 );

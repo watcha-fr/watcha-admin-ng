@@ -60,7 +60,7 @@ const DashboardTab = () => {
                 {/* Panel Memory */}
                 <Card>
                     <CardContent>
-                        <Typography variant="h6">Utilisation de la RAM</Typography>
+                        <Typography variant="h6">Mémoire</Typography>
                         <iframe
                             src={getIframeUrl(grafanaMemoryPanelId)}
                             width="100%"
@@ -74,7 +74,7 @@ const DashboardTab = () => {
                 {/* Panel Users */}
                 <Card>
                     <CardContent>
-                        <Typography variant="h6">Utilisateurs</Typography>
+                        <Typography variant="h6">Utilisateurs Totaux</Typography>
                         <iframe
                             src={getIframeUrl(grafanaUsersPanelId)}
                             width="100%"
