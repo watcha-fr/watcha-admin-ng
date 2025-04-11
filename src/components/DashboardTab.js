@@ -4,9 +4,13 @@ import { Card, CardContent, Typography, MenuItem, Select } from "@material-ui/co
 const DashboardTab = () => {
     const homeserver = localStorage.getItem("base_url");
     const grafana = homeserver.replace("-core", "-dashboard");
-    const grafanaUrl = `${grafana}/d-solo/000000012/synapse?orgId=1&panelId=`;
-    const grafanaMemoryPanelId = "198";
-    const grafanaCPUPanelId = "75";
+    const grafanaUrl = `${grafana}/d-solo/299792458/metriques-personnalisees-synapse?orgId=1&panelId=`;
+    const grafanaUsersPanelId = "101";
+    const grafanaDAUPanelId = "102";
+    const grafanaRoomsPanelId = "103";
+    const grafanaSpacesPanelId = "104";
+    const grafanaMemoryPanelId = "105";
+    const grafanaCPUPanelId = "106";
 
     // State pour la plage de temps sélectionnée
     const [timeRange, setTimeRange] = useState('now-1h');
@@ -42,7 +46,7 @@ const DashboardTab = () => {
                 {/* Panel CPU */}
                 <Card>
                     <CardContent>
-                        <Typography variant="h6">Panel CPU Usage</Typography>
+                        <Typography variant="h6">Utilisation du CPU</Typography>
                         <iframe
                             src={getIframeUrl(grafanaCPUPanelId)}
                             width="100%"
@@ -56,9 +60,65 @@ const DashboardTab = () => {
                 {/* Panel Memory */}
                 <Card>
                     <CardContent>
-                        <Typography variant="h6">Panel Memory Usage</Typography>
+                        <Typography variant="h6">Utilisation de la RAM</Typography>
                         <iframe
                             src={getIframeUrl(grafanaMemoryPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Panel Users */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Utilisateurs</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaUsersPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Panel DAU */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Utilisateurs Actifs Quotidients</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaDAUPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Panel Rooms */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Vue d'ensemble des Salons</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaRoomsPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Panel Spaces */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Vue d'ensemble des Espaces</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaSpacesPanelId)}
                             width="100%"
                             height="300"
                             frameBorder="0"
