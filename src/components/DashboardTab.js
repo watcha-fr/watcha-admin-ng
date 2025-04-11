@@ -9,8 +9,8 @@ const DashboardTab = () => {
     const grafanaDAUPanelId = "102";
     const grafanaRoomsPanelId = "103";
     const grafanaSpacesPanelId = "104";
-    const grafanaMemoryPanelId = "105";
-    const grafanaCPUPanelId = "106";
+    const grafanaCPUPanelId = "105";
+    const grafanaMemoryPanelId = "106";
 
     // State pour la plage de temps sélectionnée
     const [timeRange, setTimeRange] = useState('now-1h');
