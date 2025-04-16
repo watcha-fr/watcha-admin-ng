@@ -23,6 +23,14 @@ import {
   useRefresh,
   useUnselectAll,
 } from "react-admin";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
 
 const useStyles = makeStyles({
   small: {
@@ -141,27 +149,68 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const refresh = useRefresh();
   const [create, { loading }] = useCreate("join_room");
 
-  const handleJoin = () => {
+  const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState("");
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setUserId("");
+  };
+
+  const handleSubmit = () => {
+    if (!userId) {
+      notify("Veuillez entrer un ID d'utilisateur", { type: "warning" });
+      return;
+    }
+
     create(
       {
-        payload: { data: { id: record.id } },
+        payload: {
+          data: {
+            id: record.id,
+            user_id: userId,
+          },
+        },
       },
       {
-        onSuccess: ({ data }) => {
+        onSuccess: () => {
           notify("Salon rejoint !");
           refresh();
+          handleClose();
         },
-        onFailure: (error) => {
-          notify("Erreur lors de la tentative de rejoindre", "error");
+        onFailure: () => {
+          notify("Erreur lors de la tentative de rejoindre", { type: "error" });
         },
       }
     );
   };
 
   return (
-    <Button label="Rejoindre" onClick={handleJoin} disabled={loading}>
-      <MeetingRoomIcon />
-    </Button>
+    <>
+      <Button label="Rejoindre" onClick={handleOpen} disabled={loading}>
+        <MeetingRoomIcon />
+      </Button>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Rejoindre le salon</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="ID de l'utilisateur"
+            fullWidth
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            placeholder="@alice:server.com"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Annuler</Button>
+          <Button onClick={handleSubmit} color="primary" disabled={loading}>
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

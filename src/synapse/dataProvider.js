@@ -285,7 +285,7 @@ const resourceMap = {
     create: params => ({
       endpoint: `/_synapse/admin/v1/rooms/${params.id}/make_room_admin`,
       method: "POST",
-      body: { user_id: localStorage.getItem("user_id")  },
+      body: { user_id: params.user_id },
     }),
   },
   registration_tokens: {
