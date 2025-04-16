@@ -281,6 +281,13 @@ const resourceMap = {
       method: "PUT",
     }),
   },
+  join_room: {
+    create: params => ({
+      endpoint: `/_synapse/admin/v1/rooms/${params.data.id}/make_room_admin`,
+      method: "POST",
+      body: { user_id: localStorage.getItem("user_id")  },
+    }),
+  },
   registration_tokens: {
     path: "/_synapse/admin/v1/registration_tokens",
     map: rt => ({
@@ -298,13 +305,6 @@ const resourceMap = {
     }),
     delete: params => ({
       endpoint: `/_synapse/admin/v1/registration_tokens/${params.id}`,
-    }),
-  },
-  join_room: {
-    create: params => ({
-      endpoint: `/_synapse/admin/v1/rooms/${params.data.id}/make_room_admin`,
-      method: "POST",
-      body: { user_id: localStorage.getItem("user_id")  },
     }),
   },
   

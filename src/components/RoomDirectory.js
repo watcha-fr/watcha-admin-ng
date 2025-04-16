@@ -136,6 +136,35 @@ export const RoomDirectorySaveButton = ({ record }) => {
   );
 };
 
+export const RoomDirectoryJoinButton = ({ record }) => {
+  const notify = useNotify();
+  const refresh = useRefresh();
+  const [create, { loading }] = useCreate("join_room");
+
+  const handleJoin = () => {
+    create(
+      {
+        payload: { data: { id: record.id } },
+      },
+      {
+        onSuccess: ({ data }) => {
+          notify("Salon rejoint !");
+          refresh();
+        },
+        onFailure: (error) => {
+          notify("Erreur lors de la tentative de rejoindre", "error");
+        },
+      }
+    );
+  };
+
+  return (
+    <Button label="Rejoindre" onClick={handleJoin} disabled={loading}>
+      <MeetingRoomIcon />
+    </Button>
+  );
+};
+
 const RoomDirectoryBulkActionButtons = props => (
   <Fragment>
     <RoomDirectoryBulkDeleteButton {...props} />
@@ -169,35 +198,6 @@ const RoomDirectoryFilter = ({ ...props }) => {
         style={{ marginBottom: 8 }}
       />
     </Filter>
-  );
-};
-
-export const RoomDirectoryJoinButton = ({ record }) => {
-  const notify = useNotify();
-  const refresh = useRefresh();
-  const [create, { loading }] = useCreate("join_room"); // nom du endpoint
-
-  const handleJoin = () => {
-    create(
-      {
-        data: { id: record.id },
-      },
-      {
-        onSuccess: ({ data }) => {
-          notify("Salon rejoint !");
-          refresh();
-        },
-        onFailure: (error) => {
-          notify("Erreur lors de la tentative de rejoindre", "error");
-        },
-      }
-    );
-  };
-
-  return (
-    <Button label="Rejoindre" onClick={handleJoin} disabled={loading}>
-      <MeetingRoomIcon />
-    </Button>
   );
 };
 
