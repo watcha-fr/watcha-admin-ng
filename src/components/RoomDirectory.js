@@ -11,6 +11,10 @@ import {
   Button,
   Datagrid,
   DeleteButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Filter,
   List,
   NumberField,
@@ -23,12 +27,7 @@ import {
   useRefresh,
   useUnselectAll,
 } from "react-admin";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
+from "@mui/material";
 
 const useStyles = makeStyles({
   small: {
