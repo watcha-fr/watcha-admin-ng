@@ -183,12 +183,12 @@ export const RoomDirectoryJoinButton = ({ record }) => {
         payload: { data: { id: record.id } },
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           notify("Salon rejoint !");
           refresh();
         },
         onFailure: (error) => {
-          notify("Erreur lors de la tentative de rejoindre", "warning");
+          notify("Erreur lors de la tentative de rejoindre", "error");
         },
       }
     );
