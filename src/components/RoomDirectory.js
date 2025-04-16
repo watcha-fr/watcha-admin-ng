@@ -180,7 +180,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const handleJoin = () => {
     create(
       {
-        payload: { data: { id: record.id } },
+        data: { id: record.id },
       },
       {
         onSuccess: ({ data }) => {
