@@ -286,6 +286,7 @@ const resourceMap = {
       endpoint: `/_synapse/admin/v1/rooms/${params.id}/make_room_admin`,
       method: "POST",
       body: { user_id: params.user_id },
+      parseResponse: async () => ({ data: {} }),
     }),
   },
   registration_tokens: {
