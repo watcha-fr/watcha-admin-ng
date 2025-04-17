@@ -17,6 +17,7 @@ import {
   Pagination,
   TextField,
   useCreate,
+  useDataProvider,
   useMutation,
   useNotify,
   useTranslate,
@@ -24,13 +25,15 @@ import {
   useUnselectAll,
 } from "react-admin";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Dialog as MuiDialog,
+  DialogTitle as MuiDialogTitle,
+  DialogContent as MuiDialogContent,
+  DialogActions as MuiDialogActions,
+  TextField as MuiTextField,
+  Button as MuiButton,
+  Autocomplete as MuiAutocomplete,
 } from "@mui/material";
-import { Button as MuiButton } from "@mui/material";
-import { TextField as MuiTextField } from "@mui/material";
+
 
 const useStyles = makeStyles({
   small: {
@@ -144,43 +147,61 @@ export const RoomDirectorySaveButton = ({ record }) => {
   );
 };
 
+
 export const RoomDirectoryJoinButton = ({ record }) => {
   const notify = useNotify();
   const refresh = useRefresh();
-  const [create, { loading }] = useCreate("join_room");
+  const dataProvider = useDataProvider();
+  const [create, { isLoading }] = useCreate("join_room");
 
   const [open, setOpen] = useState(false);
-  const [userId, setUserId] = useState("");
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [usersLoading, setUsersLoading] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setUserId("");
+  const handleOpen = () => {
+    setOpen(true);
+    setUsersLoading(true);
+    dataProvider
+      .getList("users", {
+        pagination: { page: 1, perPage: 1000 },
+        sort: { field: "name", order: "ASC" },
+        filter: {},
+      })
+      .then(({ data }) => {
+        setUsers(data);
+        setUsersLoading(false);
+      })
+      .catch(() => {
+        notify("Erreur lors du chargement des utilisateurs", "error");
+        setUsersLoading(false);
+      });
   };
 
-  const handleSubmit = () => {
-    if (!userId) {
-      notify("Veuillez entrer un ID d'utilisateur", { type: "warning" });
-      return;
-    }
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedUser(null);
+  };
 
+  const handleConfirm = () => {
+    if (!selectedUser) return;
     create(
       {
         payload: {
           data: {
             id: record.id,
-            user_id: userId,
+            user_id: selectedUser.id,
           },
         },
       },
       {
         onSuccess: () => {
-          notify("Salon rejoint !");
+          notify("Utilisateur ajouté au salon !");
           refresh();
           handleClose();
         },
         onFailure: () => {
-          notify("Erreur lors de la tentative de rejoindre", { type: "error" });
+          notify("Erreur lors de l'ajout", "error");
         },
       }
     );
@@ -188,28 +209,43 @@ export const RoomDirectoryJoinButton = ({ record }) => {
 
   return (
     <>
-      <MuiButton label="Rejoindre" onClick={handleOpen} disabled={loading}>
-        <MeetingRoomIcon />
+      <MuiButton
+        onClick={handleOpen}
+        startIcon={<MeetingRoomIcon />}
+        disabled={isLoading}
+      >
+        Rejoindre
       </MuiButton>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Rejoindre le salon</DialogTitle>
-        <DialogContent>
-          <MuiTextField
-            label="ID de l'utilisateur"
+      <MuiDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <MuiDialogTitle>Ajouter un utilisateur au salon</MuiDialogTitle>
+        <MuiDialogContent>
+          <MuiAutocomplete
             fullWidth
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            placeholder="@alice:server.com"
+            options={users}
+            loading={usersLoading}
+            getOptionLabel={(option) => option.id}
+            value={selectedUser}
+            onChange={(event, newValue) => setSelectedUser(newValue)}
+            renderInput={(params) => (
+              <MuiTextField
+                {...params}
+                label="Utilisateur"
+                variant="standard"
+              />
+            )}
           />
-        </DialogContent>
-        <DialogActions>
+        </MuiDialogContent>
+        <MuiDialogActions>
           <MuiButton onClick={handleClose}>Annuler</MuiButton>
-          <MuiButton onClick={handleSubmit} color="primary" disabled={loading}>
-            Valider
+          <MuiButton
+            onClick={handleConfirm}
+            disabled={isLoading || !selectedUser}
+          >
+            Confirmer
           </MuiButton>
-        </DialogActions>
-      </Dialog>
+        </MuiDialogActions>
+      </MuiDialog>
     </>
   );
 };
