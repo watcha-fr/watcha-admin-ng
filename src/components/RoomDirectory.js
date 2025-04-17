@@ -29,6 +29,8 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
+import { TextField as MuiTextField } from "@mui/material";
 
 const useStyles = makeStyles({
   small: {
@@ -186,14 +188,14 @@ export const RoomDirectoryJoinButton = ({ record }) => {
 
   return (
     <>
-      <Button label="Rejoindre" onClick={handleOpen} disabled={loading}>
+      <MuiButton label="Rejoindre" onClick={handleOpen} disabled={loading}>
         <MeetingRoomIcon />
-      </Button>
+      </MuiButton>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Rejoindre le salon</DialogTitle>
         <DialogContent>
-          <TextField
+          <MuiTextField
             label="ID de l'utilisateur"
             fullWidth
             value={userId}
@@ -202,10 +204,10 @@ export const RoomDirectoryJoinButton = ({ record }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Annuler</Button>
-          <Button onClick={handleSubmit} color="primary" disabled={loading}>
+          <MuiButton onClick={handleClose}>Annuler</MuiButton>
+          <MuiButton onClick={handleSubmit} color="primary" disabled={loading}>
             Valider
-          </Button>
+          </MuiButton>
         </DialogActions>
       </Dialog>
     </>
