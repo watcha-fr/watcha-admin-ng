@@ -284,8 +284,8 @@ const resourceMap = {
   join_room: {
     create: params => ({
       endpoint: `/_synapse/admin/v1/rooms/${params.id}/make_room_admin`,
-      method: "POST",
       body: { user_id: params.user_id },
+      method: "POST",
     }),
   },
   registration_tokens: {

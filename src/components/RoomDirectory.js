@@ -195,7 +195,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           notify("Utilisateur ajouté au salon !");
           refresh();
           handleClose();
