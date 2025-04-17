@@ -27,7 +27,6 @@ import {
   useRefresh,
   useUnselectAll,
 } from "react-admin";
-from "@mui/material";
 
 const useStyles = makeStyles({
   small: {
