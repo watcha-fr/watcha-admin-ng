@@ -224,7 +224,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
             fullWidth
             options={users}
             loading={usersLoading}
-            getOptionLabel={(option) => option.id}
+            getOptionLabel={(option) => option.displayname || option.id}
             value={selectedUser}
             onChange={(event, newValue) => setSelectedUser(newValue)}
             renderInput={(params) => (
