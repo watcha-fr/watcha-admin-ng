@@ -200,7 +200,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
           refresh();
           handleClose();
         },
-        onFailure: () => {
+        onFailure: error => {
           notify("Erreur lors de l'ajout", "error");
         },
       }
