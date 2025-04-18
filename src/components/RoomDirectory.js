@@ -217,16 +217,16 @@ export const RoomDirectoryJoinButton = ({ record }) => {
 
   return (
     <>
-      <MuiButton
+      <Button
         onClick={handleOpen}
         startIcon={<MeetingRoomIcon />}
         disabled={isLoading}
       >
         Administrer le salon
-      </MuiButton>
+      </Button>
 
       <MuiDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <MuiDialogTitle>Ajouter un utilisateur au salon</MuiDialogTitle>
+        <MuiDialogTitle>Ajouter un utilisateur en administrateur du salon</MuiDialogTitle>
         <MuiDialogContent>
         <MuiAutocomplete
           fullWidth
