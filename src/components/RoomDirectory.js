@@ -238,12 +238,11 @@ export const RoomDirectoryJoinButton = ({ record }) => {
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
           filterOptions={(options, { inputValue }) =>
-            options.filter((option) =>
-              (option.displayname || option.id)
-                .toLowerCase()
-                .includes(inputValue.toLowerCase())
-            )
-          }
+            options.filter((option) => {
+              const label = (option.displayname || option.id).toLowerCase();
+              return label.includes(inputValue.toLowerCase());
+            })
+          }          
           renderInput={(params) => (
             <MuiTextField
               {...params}
