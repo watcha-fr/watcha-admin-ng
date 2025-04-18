@@ -201,6 +201,7 @@ export const RoomDirectoryJoinButton = ({ record }) => {
           handleClose();
         },
         onFailure: error => {
+          console.log('Error : %s', error)
           notify("Erreur lors de l'ajout", "error");
         },
       }
