@@ -287,6 +287,7 @@ const resourceMap = {
       body: { user_id: params.user_id },
       method: "POST",
     }),
+    map: json => (json.data ? json.data : {}),
   },
   registration_tokens: {
     path: "/_synapse/admin/v1/registration_tokens",
