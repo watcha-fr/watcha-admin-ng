@@ -201,9 +201,15 @@ export const RoomDirectoryJoinButton = ({ record }) => {
           handleClose();
         },
         onFailure: error => {
-          console.log('Error : %s', error)
+          console.error("Erreur complète :", error);
+        
+          // Si le backend renvoie un `body`, il est souvent là :
+          if (error && error.body) {
+            console.log("Contenu de la réponse :", error.body);
+          }
+        
           notify("Erreur lors de l'ajout", "error");
-        },
+        }
       }
     );
   };
