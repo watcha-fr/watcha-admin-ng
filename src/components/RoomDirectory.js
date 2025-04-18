@@ -227,21 +227,30 @@ export const RoomDirectoryJoinButton = ({ record }) => {
       <MuiDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <MuiDialogTitle>Ajouter un utilisateur au salon</MuiDialogTitle>
         <MuiDialogContent>
-          <MuiAutocomplete
-            fullWidth
-            options={users}
-            loading={usersLoading}
-            getOptionLabel={(option) => option.displayname || option.id}
-            value={selectedUser}
-            onChange={(event, newValue) => setSelectedUser(newValue)}
-            renderInput={(params) => (
-              <MuiTextField
-                {...params}
-                label="Utilisateur"
-                variant="standard"
-              />
-            )}
-          />
+        <MuiAutocomplete
+          fullWidth
+          options={users}
+          loading={usersLoading}
+          getOptionLabel={(option) => option.displayname || option.id}
+          value={selectedUser}
+          onChange={(event, newValue) => setSelectedUser(newValue)}
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+          filterOptions={(options, { inputValue }) =>
+            options.filter((option) =>
+              (option.displayname || option.id)
+                .toLowerCase()
+                .includes(inputValue.toLowerCase())
+            )
+          }
+          renderInput={(params) => (
+            <MuiTextField
+              {...params}
+              label="Utilisateur"
+              variant="standard"
+            />
+          )}
+        />
         </MuiDialogContent>
         <MuiDialogActions>
           <MuiButton onClick={handleClose}>Annuler</MuiButton>
