@@ -158,7 +158,8 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [usersLoading, setUsersLoading] = useState(false);
-
+  const [inputValue, setInputValue] = useState("");
+  
   const handleOpen = () => {
     setOpen(true);
     setUsersLoading(true);
