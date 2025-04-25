@@ -159,29 +159,17 @@ export const RoomDirectoryJoinButton = ({ record }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [usersLoading, setUsersLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  
+
   const handleOpen = () => {
     setOpen(true);
-    setUsersLoading(true);
-    dataProvider
-      .getList("users", {
-        pagination: { page: 1, perPage: 1000 },
-        sort: { field: "name", order: "ASC" },
-        filter: {},
-      })
-      .then(({ data }) => {
-        setUsers(data);
-        setUsersLoading(false);
-      })
-      .catch(() => {
-        notify("Erreur lors du chargement des utilisateurs", "error");
-        setUsersLoading(false);
-      });
+    setUsers([]);
+    setInputValue("");
   };
 
   const handleClose = () => {
     setOpen(false);
     setSelectedUser(null);
+    setUsers([]);
   };
 
   const handleConfirm = () => {
@@ -196,24 +184,48 @@ export const RoomDirectoryJoinButton = ({ record }) => {
         },
       },
       {
-        onSuccess: ({ data }) => {
+        onSuccess: () => {
           notify("Utilisateur ajouté au salon !");
           refresh();
           handleClose();
         },
-        onFailure: error => {
+        onFailure: (error) => {
           console.error("Erreur complète :", error);
-        
-          // Si le backend renvoie un `body`, il est souvent là :
-          if (error && error.body) {
+          if (error?.body) {
             console.log("Contenu de la réponse :", error.body);
           }
-        
           notify("Erreur lors de l'ajout", "error");
-        }
+        },
       }
     );
   };
+
+  useEffect(() => {
+    if (inputValue.length < 2) {
+      setUsers([]);
+      return;
+    }
+
+    setUsersLoading(true);
+    dataProvider
+      .getList("users", {
+        pagination: { page: 1, perPage: 20 },
+        sort: { field: "name", order: "ASC" },
+        filter: {
+          name: inputValue,
+          guests: true,
+          deactivated: false,
+        },
+      })
+      .then(({ data }) => {
+        setUsers(data);
+        setUsersLoading(false);
+      })
+      .catch(() => {
+        notify("Erreur lors de la recherche d'utilisateurs", "error");
+        setUsersLoading(false);
+      });
+  }, [inputValue, dataProvider, notify]);
 
   return (
     <>
@@ -222,36 +234,28 @@ export const RoomDirectoryJoinButton = ({ record }) => {
         startIcon={<MeetingRoomIcon />}
         disabled={isLoading}
         label="Administrer le salon"
-      >
-        
-      </Button>
+      />
 
       <MuiDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <MuiDialogTitle>Ajouter un utilisateur en administrateur du salon</MuiDialogTitle>
         <MuiDialogContent>
-        <MuiAutocomplete
-          fullWidth
-          options={users}
-          loading={usersLoading}
-          getOptionLabel={(option) => option.displayname || option.id}
-          value={selectedUser}
-          onChange={(event, newValue) => setSelectedUser(newValue)}
-          inputValue={inputValue}
-          onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
-          filterOptions={(options, { inputValue }) =>
-            options.filter((option) => {
-              const label = (option.displayname || option.id).toLowerCase();
-              return label.includes(inputValue.toLowerCase());
-            })
-          }          
-          renderInput={(params) => (
-            <MuiTextField
-              {...params}
-              label="Utilisateur"
-              variant="standard"
-            />
-          )}
-        />
+          <MuiAutocomplete
+            fullWidth
+            options={users}
+            loading={usersLoading}
+            getOptionLabel={(option) => option.displayname || option.id}
+            value={selectedUser}
+            onChange={(event, newValue) => setSelectedUser(newValue)}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+            renderInput={(params) => (
+              <MuiTextField
+                {...params}
+                label="Utilisateur"
+                variant="standard"
+              />
+            )}
+          />
         </MuiDialogContent>
         <MuiDialogActions>
           <MuiButton onClick={handleClose}>Annuler</MuiButton>
