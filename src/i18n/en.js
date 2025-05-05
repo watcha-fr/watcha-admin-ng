@@ -366,6 +366,7 @@ const en = {
   },
   dashboard: {
     name: "Dashboards",
+    title: "Dashboard",
   },
 };
 export default en;

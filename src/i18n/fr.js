@@ -369,7 +369,8 @@ const fr = {
     helper: { length: "Longueur du jeton généré aléatoirement si aucun jeton n'est pas spécifié" },
   },
   dashboard: {
-    name: "Tableau de bord |||| Tableaux de bord",
+    name: "Tableau de bord",
+    title: "Tableau de bord",
   },
 };
 export default fr;
