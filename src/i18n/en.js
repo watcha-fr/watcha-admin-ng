@@ -364,5 +364,8 @@ const en = {
     },
     helper: { length: "Length of the token if no token is given." },
   },
+  dashboard: {
+    name: "Dashboards",
+  },
 };
 export default en;
