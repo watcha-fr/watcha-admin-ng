@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, MenuItem, Select } from "@material-ui/co
 
 const DashboardTab = () => {
     const homeserver = localStorage.getItem("base_url");
-    const grafana = homeserver.replace("-core", "-dashboard").replace;
+    const grafana = homeserver.replace("-core", "-dashboard");
     const grafanaUrl = `${grafana}/d-solo/299792458/metriques-personnalisees-synapse?orgId=1&var-instance=dicuter-sitiv&panelId=`;
     const grafanaUsersPanelId = "101";
     const grafanaDAUPanelId = "102";
@@ -23,18 +23,18 @@ const DashboardTab = () => {
         setTimeRange(event.target.value);
     };
 
-    const getIframeUrl = (panelId) => {
-        const serverMap = {
-            "https://discuter-mdl-core.territoirenumeriqueouvert.org": "dicuter-mdl",
-            "https://discuter-sitiv-core.territoirenumeriqueouvert.org": "dicuter-sitiv",
-            "https://discuter-vdl-core.territoirenumeriqueouvert.org": "dicuter-vdl",
-        };
-
-        const instance = serverMap[homeserver];
-        const instanceParam = instance ? `&var-instance=${instance}` : "";
-
-        return `${grafanaUrl}${panelId}&from=${timeRange}&to=now${instanceParam}`;
+const getIframeUrl = (panelId) => {
+    const serverMap = {
+        "https://discuter-mdl-core.territoirenumeriqueouvert.org": "dicuter-mdl",
+        "https://discuter-sitiv-core.territoirenumeriqueouvert.org": "dicuter-sitiv",
+        "https://discuter-vdl-core.territoirenumeriqueouvert.org": "dicuter-vdl",
     };
+
+    const instance = serverMap[homeserver];
+    const instanceParam = instance ? `&var-instance=${instance}` : "";
+
+    return `${grafanaUrl}${panelId}&from=${timeRange}&to=now${instanceParam}`;
+};
 
 
     return (
