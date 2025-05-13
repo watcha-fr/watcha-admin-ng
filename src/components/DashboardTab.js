@@ -11,6 +11,10 @@ const DashboardTab = () => {
     const grafanaSpacesPanelId = "104";
     const grafanaCPUPanelId = "105";
     const grafanaMemoryPanelId = "106";
+    const grefanaUsgaePanelId = "107";
+    const grafanaDocumentsPanelId = "108";
+    const grafanaJitsiPanelId = "109";
+    const grafanaNotificationMobilPanelId = "110";    
 
     // State pour la plage de temps sélectionnée
     const [timeRange, setTimeRange] = useState('now-1h');
@@ -119,6 +123,58 @@ const DashboardTab = () => {
                         <Typography variant="h6">Vue d'ensemble des Espaces</Typography>
                         <iframe
                             src={getIframeUrl(grafanaSpacesPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+                {/* Panel Documents */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Documents partagés</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaDocumentsPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+                {/* Panel Jitsi */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Appels Jitsi</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaJitsiPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+                {/* Panel Notification Mobile */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Notifications Mobiles</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaNotificationMobilPanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+                {/* Panel Usage */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Utilisation de Watcha</Typography>
+                        <iframe
+                            src={getIframeUrl(grefanaUsgaePanelId)}
                             width="100%"
                             height="300"
                             frameBorder="0"
