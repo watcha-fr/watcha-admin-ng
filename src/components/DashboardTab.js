@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, MenuItem, Select } from "@material-ui/co
 const DashboardTab = () => {
     const homeserver = localStorage.getItem("base_url");
     const grafana = homeserver.replace("-core", "-dashboard");
-    const grafanaUrl = `${grafana}/d-solo/299792458/metriques-personnalisees-synapse?orgId=1&var-instance=dicuter-sitiv&panelId=`;
+    const grafanaUrl = `${grafana}/d-solo/299792458/metriques-personnalisees-synapse?orgId=1&panelId=`;
     const grafanaUsersPanelId = "101";
     const grafanaDAUPanelId = "102";
     const grafanaRoomsPanelId = "103";
