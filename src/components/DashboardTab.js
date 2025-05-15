@@ -14,7 +14,10 @@ const DashboardTab = () => {
     const grefanaUsgaePanelId = "107";
     const grafanaDocumentsPanelId = "108";
     const grafanaJitsiPanelId = "109";
-    const grafanaNotificationMobilPanelId = "110";    
+    const grafanaNotificationMobilPanelId = "110";
+    const grafanaNetUsagePanelId = "117";  
+    const grafanaPartageTypePanelId = "114";
+    const grafanaPartageFederePanelId = "115";
 
     // State pour la plage de temps sélectionnée
     const [timeRange, setTimeRange] = useState('now-1h');
@@ -85,6 +88,20 @@ const getIframeUrl = (panelId) => {
                     </CardContent>
                 </Card>
 
+                {/* Panel NetUsage */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Bande Passante</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaNetUsagePanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
                 {/* Panel Users */}
                 <Card>
                     <CardContent>
@@ -140,6 +157,7 @@ const getIframeUrl = (panelId) => {
                         />
                     </CardContent>
                 </Card>
+
                 {/* Panel Documents */}
                 <Card>
                     <CardContent>
@@ -153,6 +171,35 @@ const getIframeUrl = (panelId) => {
                         />
                     </CardContent>
                 </Card>
+
+                {/* Panel Partage Type */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Type de Partage</Typography>
+                        <iframe
+                            src={getIframeUrl(grafanaPartageTypePanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen 
+                        />
+                    </CardContent>
+                </Card>
+
+                {/* Panel Partage Fédéré */}
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6">Partage Fédéré</Typography>
+                        <iframe 
+                            src={getIframeUrl(grafanaPartageFederePanelId)}
+                            width="100%"
+                            height="300"
+                            frameBorder="0"
+                            allowFullScreen
+                        />
+                    </CardContent>
+                </Card>
+
                 {/* Panel Jitsi */}
                 <Card>
                     <CardContent>
@@ -166,6 +213,7 @@ const getIframeUrl = (panelId) => {
                         />
                     </CardContent>
                 </Card>
+
                 {/* Panel Notification Mobile */}
                 <Card>
                     <CardContent>
@@ -179,6 +227,7 @@ const getIframeUrl = (panelId) => {
                         />
                     </CardContent>
                 </Card>
+
                 {/* Panel Usage */}
                 <Card>
                     <CardContent>
