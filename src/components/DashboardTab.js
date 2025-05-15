@@ -28,9 +28,9 @@ const DashboardTab = () => {
 
 const getIframeUrl = (panelId) => {
     const serverMap = {
-        "https://discuter-mdl-core.territoirenumeriqueouvert.org": "dicuter-mdl",
-        "https://discuter-core.territoirenumeriqueouvert.org": "dicuter-sitiv",
-        "https://discuter-vdl-core.territoirenumeriqueouvert.org": "dicuter-vdl",
+        "https://discuter-mdl-core.territoirenumeriqueouvert.org": "discuter-mdl",
+        "https://discuter-core.territoirenumeriqueouvert.org": "discuter-sitiv",
+        "https://discuter-vdl-core.territoirenumeriqueouvert.org": "discuter-vdl",
     };
 
     const instance = serverMap[homeserver];
