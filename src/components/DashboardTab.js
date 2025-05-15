@@ -29,7 +29,7 @@ const DashboardTab = () => {
 const getIframeUrl = (panelId) => {
     const serverMap = {
         "https://discuter-mdl-core.territoirenumeriqueouvert.org": "dicuter-mdl",
-        "https://discuter-sitiv-core.territoirenumeriqueouvert.org": "dicuter-sitiv",
+        "https://discuter-core.territoirenumeriqueouvert.org": "dicuter-sitiv",
         "https://discuter-vdl-core.territoirenumeriqueouvert.org": "dicuter-vdl",
     };
 
