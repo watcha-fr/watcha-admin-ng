@@ -1,120 +1,90 @@
 import React, { useEffect, useState } from "react";
 
 export default function FileTypeFilterAdmin() {
-  const [mimes, setMimes] = useState([]);
-  const [newMime, setNewMime] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
-  // Base URL et token du homeserver
+  const [blockedExtensions, setBlockedExtensions] = useState([]);
+  const [newExt, setNewExt] = useState("");
   const homeserver = localStorage.getItem("base_url");
-  const token = localStorage.getItem("access_token");
-  const endpoint = homeserver + "/_synapse/admin/v1/watcha_file_type_filter";
+  const accessToken = localStorage.getItem("access_token");
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`,
-  };
-
-  // Charger la liste depuis le serveur
-  useEffect(() => {
-    async function fetchMimes() {
-      setLoading(true);
-      try {
-        const resp = await fetch(endpoint, { headers });
-        if (!resp.ok) throw new Error("Erreur lors du chargement des MIME");
-        const data = await resp.json();
-        setMimes(data.blocked_mimes.map(m => ({ mime: m, blocked: true })));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchMimes();
-  }, [endpoint]);
-
-  // Toggle Bloqué/Autorisé
-  const toggleBlocked = index => {
-    setMimes(prev => {
-      const copy = [...prev];
-      copy[index].blocked = !copy[index].blocked;
-      return copy;
-    });
-  };
-
-  // Ajouter un nouveau MIME
-  const addMime = () => {
-    if (!newMime.trim()) return;
-    setMimes(prev => [...prev, { mime: newMime.trim(), blocked: true }]);
-    setNewMime("");
-  };
-
-  // Sauvegarder la liste
-  const saveMimes = async () => {
-    setSaving(true);
+  const fetchBlockedExtensions = async () => {
     try {
-      const blockedList = mimes.filter(m => m.blocked).map(m => m.mime);
-      const resp = await fetch(endpoint, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ blocked_mimes: blockedList }),
+      const res = await fetch(`${homeserver}/_synapse/admin/v1/watcha_file_type_filter`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
       });
-      if (!resp.ok) throw new Error("Erreur lors de la sauvegarde");
-      alert("Liste sauvegardée !");
+      const data = await res.json();
+      setBlockedExtensions(data.blocked_extensions || []);
     } catch (err) {
-      console.error(err);
-      alert("Erreur lors de la sauvegarde");
-    } finally {
-      setSaving(false);
+      console.error("Erreur lors du fetch des extensions bloquées", err);
     }
   };
 
-  if (loading) return <div>Chargement...</div>;
+  const saveBlockedExtensions = async (extensions) => {
+    try {
+      const res = await fetch(`${homeserver}/_synapse/admin/v1/watcha_file_type_filter`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ blocked_extensions: extensions }),
+      });
+      const data = await res.json();
+      setBlockedExtensions(data.blocked_extensions || []);
+    } catch (err) {
+      console.error("Erreur lors de la sauvegarde des extensions", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlockedExtensions();
+  }, []);
+
+  const toggleExtension = (ext) => {
+    let updated;
+    if (blockedExtensions.includes(ext)) {
+      updated = blockedExtensions.filter((e) => e !== ext);
+    } else {
+      updated = [...blockedExtensions, ext];
+    }
+    saveBlockedExtensions(updated);
+  };
+
+  const handleAdd = () => {
+    if (newExt && !blockedExtensions.includes(newExt)) {
+      saveBlockedExtensions([...blockedExtensions, newExt]);
+      setNewExt("");
+    }
+  };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h2>Gestion des MIME bloqués</h2>
-
-      <div style={{ maxHeight: "400px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: "left" }}>MIME Type</th>
-              <th>Bloqué</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mimes.map((m, i) => (
-              <tr key={i}>
-                <td>{m.mime}</td>
-                <td style={{ textAlign: "center" }}>
-                  <input
-                    type="checkbox"
-                    checked={m.blocked}
-                    onChange={() => toggleBlocked(i)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ marginTop: "15px" }}>
+    <div style={{ padding: "1rem" }}>
+      <h2>Extensions bloquées</h2>
+      <ul style={{ maxHeight: "300px", overflowY: "auto" }}>
+        {blockedExtensions.map((ext) => (
+          <li key={ext}>
+            <label>
+              <input
+                type="checkbox"
+                checked={true}
+                onChange={() => toggleExtension(ext)}
+              />
+              {ext}
+            </label>
+          </li>
+        ))}
+      </ul>
+      <div style={{ marginTop: "1rem" }}>
         <input
           type="text"
-          value={newMime}
-          onChange={e => setNewMime(e.target.value)}
-          placeholder="Ajouter un MIME type"
+          value={newExt}
+          onChange={(e) => setNewExt(e.target.value)}
+          placeholder="Nouvelle extension"
         />
-        <button onClick={addMime} style={{ marginLeft: "5px" }}>Ajouter</button>
-      </div>
-
-      <div style={{ marginTop: "15px" }}>
-        <button onClick={saveMimes} disabled={saving}>
-          {saving ? "Sauvegarde..." : "Sauvegarder la liste"}
-        </button>
+        <button onClick={handleAdd}>Ajouter</button>
       </div>
     </div>
   );
