@@ -7,6 +7,7 @@ import { UserList, UserCreate, UserEdit } from "./components/users";
 import { RoomList, RoomShow } from "./components/rooms";
 import { ReportList, ReportShow } from "./components/EventReports";
 import DashboardTab from "./components/DashboardTab";
+import FileTypeFilterAdmin from "./components/FileTypeFilterAdmin";
 import LoginPage from "./components/LoginPage";
 import UserIcon from "@material-ui/icons/Group";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
