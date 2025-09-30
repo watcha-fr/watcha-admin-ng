@@ -6,16 +6,22 @@ export default function FileTypeFilterAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Base URL du homeserver
+  // Base URL et token du homeserver
   const homeserver = localStorage.getItem("base_url");
+  const token = localStorage.getItem("access_token");
   const endpoint = homeserver + "/_synapse/admin/v1/watcha_file_type_filter";
+
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  };
 
   // Charger la liste depuis le serveur
   useEffect(() => {
     async function fetchMimes() {
       setLoading(true);
       try {
-        const resp = await fetch(endpoint);
+        const resp = await fetch(endpoint, { headers });
         if (!resp.ok) throw new Error("Erreur lors du chargement des MIME");
         const data = await resp.json();
         setMimes(data.blocked_mimes.map(m => ({ mime: m, blocked: true })));
@@ -51,7 +57,7 @@ export default function FileTypeFilterAdmin() {
       const blockedList = mimes.filter(m => m.blocked).map(m => m.mime);
       const resp = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ blocked_mimes: blockedList }),
       });
       if (!resp.ok) throw new Error("Erreur lors de la sauvegarde");
