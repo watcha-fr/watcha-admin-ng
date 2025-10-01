@@ -15,6 +15,17 @@ export default function FileTypeFilterAdmin() {
     "Authorization": `Bearer ${token}`,
   };
 
+  // Liste complète des extensions connues (tu peux l’étendre comme tu veux)
+  const allKnownExtensions = [
+    "doc", "docx", "odt", "rtf", "txt", "pdf",
+    "xls", "xlsx", "ods", "csv",
+    "ppt", "pptx", "odp",
+    "jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp",
+    "mp3", "wav", "ogg", "flac",
+    "mp4", "avi", "mkv", "mov", "webm",
+    "sh", "bat", "exe", "jar", "py", "php"
+  ];
+
   useEffect(() => {
     async function fetchExtensions() {
       setLoading(true);
@@ -22,9 +33,22 @@ export default function FileTypeFilterAdmin() {
         const resp = await fetch(endpoint, { headers });
         if (!resp.ok) throw new Error("Erreur lors du chargement des extensions");
         const data = await resp.json();
-        setExtensions(
-          data.blocked_extensions.map((ext) => ({ ext, blocked: true }))
-        );
+        const blocked = data.blocked_extensions || [];
+
+        // Fusionner liste connue + bloquées
+        const merged = allKnownExtensions.map(ext => ({
+          ext,
+          blocked: blocked.includes(ext),
+        }));
+
+        // Ajouter celles bloquées qui ne sont pas dans la liste connue
+        blocked.forEach(ext => {
+          if (!merged.some(e => e.ext === ext)) {
+            merged.push({ ext, blocked: true });
+          }
+        });
+
+        setExtensions(merged);
       } catch (err) {
         console.error(err);
       } finally {
@@ -74,7 +98,17 @@ export default function FileTypeFilterAdmin() {
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h2>Gestion des extensions de fichiers bloquées</h2>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxHeight: "400px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+          gap: "8px",
+          maxHeight: "400px",
+          overflowY: "auto",
+          border: "1px solid #ccc",
+          padding: "10px",
+        }}
+      >
         {extensions.map((e, i) => (
           <label key={i} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <input
