@@ -1,5 +1,5 @@
 # Builder
-FROM node:lts as builder
+FROM node:16 as builder
 
 ARG PUBLIC_URL=/
 ARG REACT_APP_SERVER
@@ -7,11 +7,9 @@ ARG REACT_APP_SERVER
 WORKDIR /src
 
 COPY . /src
-RUN yarn add @mui/material @emotion/react @emotion/styled @mui/icons-material
 RUN yarn --network-timeout=100000 install
 ENV NODE_OPTIONS="--openssl-legacy-provider"
 RUN PUBLIC_URL=$PUBLIC_URL REACT_APP_SERVER=$REACT_APP_SERVER yarn build
-
 
 # App
 FROM nginx:alpine
