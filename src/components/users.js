@@ -143,6 +143,11 @@ const UserFilter = props => (
       source="deactivated"
       alwaysOn
     />
+    <BooleanInput
+      label="resources.users.fields.show_locked"
+      source="locked"
+      alwaysOn
+    />
   </Filter>
 );
 
@@ -168,7 +173,7 @@ export const UserList = props => {
     <List
       {...props}
       filters={<UserFilter />}
-      filterDefaultValues={{ guests: true, deactivated: false }}
+      filterDefaultValues={{ guests: true, deactivated: false, locked: false }}
       sort={{ field: "name", order: "ASC" }}
       actions={<UserListActions maxResults={10000} />}
       bulkActionButtons={<UserBulkActionButtons />}
@@ -184,6 +189,7 @@ export const UserList = props => {
         <TextField source="displayname" />
         <BooleanField source="is_guest" />
         <BooleanField source="admin" />
+        <BooleanField source="locked" />
         <BooleanField source="deactivated" />
         <DateField
           source="creation_ts"
@@ -334,6 +340,10 @@ export const UserEdit = props => {
           <TextInput source="displayname" />
           <PasswordInput source="password" autoComplete="new-password" />
           <BooleanInput source="admin" />
+          <BooleanInput
+            source="locked"
+            helperText="resources.users.helper.lock"
+          />
           <BooleanInput
             source="deactivated"
             helperText="resources.users.helper.deactivate"

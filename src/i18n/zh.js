@@ -111,8 +111,10 @@ const zh = {
         is_guest: "访客",
         admin: "服务器管理员",
         deactivated: "被禁用",
+        locked: "已锁定",
         guests: "显示访客",
         show_deactivated: "显示被禁用的账户",
+        show_locked: "显示已锁定的账户",
         user_id: "搜索用户",
         displayname: "显示名字",
         password: "密码",
@@ -126,6 +128,7 @@ const zh = {
       },
       helper: {
         deactivate: "您必须提供一串密码来激活账户。",
+        lock: "阻止用户登录而不删除其账户。",
         erase: "将用户标记为根据 GDPR 的要求抹除了",
       },
       action: {

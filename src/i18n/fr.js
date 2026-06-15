@@ -111,8 +111,10 @@ const fr = {
         is_guest: "Visiteur",
         admin: "Administrateur du serveur",
         deactivated: "Désactivé",
+        locked: "Verrouillé",
         guests: "Afficher les visiteurs",
         show_deactivated: "Afficher les utilisateurs désactivés",
+        show_locked: "Afficher les utilisateurs verrouillés",
         user_id: "Rechercher un utilisateur",
         displayname: "Nom d'affichage",
         password: "Mot de passe",
@@ -127,6 +129,7 @@ const fr = {
       },
       helper: {
         deactivate: "Vous devrez fournir un mot de passe pour réactiver le compte.",
+        lock: "Empêche l'utilisateur de se connecter sans supprimer son compte.",
         erase: "Marquer l'utilisateur comme effacé conformément au RGPD",
       },
       action: {

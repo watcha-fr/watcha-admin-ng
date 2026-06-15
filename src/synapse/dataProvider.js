@@ -1,6 +1,7 @@
 import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
-
+import { accountHistoryGetList } from "../components/AccountHistory";
+ 
 // Adds the access token to all requests
 const jsonClient = (url, options = {}) => {
   const token = localStorage.getItem("access_token");
@@ -13,7 +14,7 @@ const jsonClient = (url, options = {}) => {
   }
   return fetchUtils.fetchJson(url, options);
 };
-
+ 
 const mxcUrlToHttp = mxcUrl => {
   const homeserver = localStorage.getItem("base_url");
   const re = /^mxc:\/\/([^/]+)\/(\w+)/;
@@ -24,7 +25,7 @@ const mxcUrlToHttp = mxcUrl => {
   const mediaId = ret[2];
   return `${homeserver}/_matrix/media/r0/thumbnail/${serverName}/${mediaId}?width=24&height=24&method=scale`;
 };
-
+ 
 const resourceMap = {
   users: {
     path: "/_synapse/admin/v2/users",
@@ -35,7 +36,7 @@ const resourceMap = {
       is_guest: !!u.is_guest,
       admin: !!u.admin,
       deactivated: !!u.deactivated,
-      // need timestamp in milliseconds
+      locked: !!u.locked,
       creation_ts_ms: u.creation_ts * 1000,
     }),
     data: "users",
@@ -67,9 +68,7 @@ const resourceMap = {
       public: !!r.public,
     }),
     data: "rooms",
-    total: json => {
-      return json.total_rooms;
-    },
+    total: json => json.total_rooms,
     delete: params => ({
       endpoint: `/_synapse/admin/v1/rooms/${params.id}`,
       body: { block: false },
@@ -77,22 +76,14 @@ const resourceMap = {
   },
   reports: {
     path: "/_synapse/admin/v1/event_reports",
-    map: er => ({
-      ...er,
-      id: er.id,
-    }),
+    map: er => ({ ...er, id: er.id }),
     data: "event_reports",
     total: json => json.total,
   },
   devices: {
-    map: d => ({
-      ...d,
-      id: d.device_id,
-    }),
+    map: d => ({ ...d, id: d.device_id }),
     data: "devices",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
     reference: id => ({
       endpoint: `/_synapse/admin/v2/users/${encodeURIComponent(id)}/devices`,
     }),
@@ -104,76 +95,48 @@ const resourceMap = {
   },
   connections: {
     path: "/_synapse/admin/v1/whois",
-    map: c => ({
-      ...c,
-      id: c.user_id,
-    }),
+    map: c => ({ ...c, id: c.user_id }),
     data: "connections",
   },
   room_members: {
-    map: m => ({
-      id: m,
-    }),
+    map: m => ({ id: m }),
     reference: id => ({
       endpoint: `/_synapse/admin/v1/rooms/${id}/members`,
     }),
     data: "members",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
   },
   room_state: {
-    map: rs => ({
-      ...rs,
-      id: rs.event_id,
-    }),
+    map: rs => ({ ...rs, id: rs.event_id }),
     reference: id => ({
       endpoint: `/_synapse/admin/v1/rooms/${id}/state`,
     }),
     data: "state",
-    total: json => {
-      return json.state.length;
-    },
+    total: json => json.state.length,
   },
   pushers: {
-    map: p => ({
-      ...p,
-      id: p.pushkey,
-    }),
+    map: p => ({ ...p, id: p.pushkey }),
     reference: id => ({
       endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(id)}/pushers`,
     }),
     data: "pushers",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
   },
   joined_rooms: {
-    map: jr => ({
-      id: jr,
-    }),
+    map: jr => ({ id: jr }),
     reference: id => ({
-      endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(
-        id
-      )}/joined_rooms`,
+      endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(id)}/joined_rooms`,
     }),
     data: "joined_rooms",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
   },
   users_media: {
-    map: um => ({
-      ...um,
-      id: um.media_id,
-    }),
+    map: um => ({ ...um, id: um.media_id }),
     reference: id => ({
       endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(id)}/media`,
     }),
     data: "media",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
     delete: params => ({
       endpoint: `/_synapse/admin/v1/media/${localStorage.getItem(
         "home_server"
@@ -222,37 +185,24 @@ const resourceMap = {
       endpoint: "/_synapse/admin/v1/send_server_notice",
       body: {
         user_id: data.id,
-        content: {
-          msgtype: "m.text",
-          body: data.body,
-        },
+        content: { msgtype: "m.text", body: data.body },
       },
       method: "POST",
     }),
   },
   user_media_statistics: {
     path: "/_synapse/admin/v1/statistics/users/media",
-    map: usms => ({
-      ...usms,
-      id: usms.user_id,
-    }),
+    map: usms => ({ ...usms, id: usms.user_id }),
     data: "users",
-    total: json => {
-      return json.total;
-    },
+    total: json => json.total,
   },
   forward_extremities: {
-    map: fe => ({
-      ...fe,
-      id: fe.event_id,
-    }),
+    map: fe => ({ ...fe, id: fe.event_id }),
     reference: id => ({
       endpoint: `/_synapse/admin/v1/rooms/${id}/forward_extremities`,
     }),
     data: "results",
-    total: json => {
-      return json.count;
-    },
+    total: json => json.count,
     delete: params => ({
       endpoint: `/_synapse/admin/v1/rooms/${params.id}/forward_extremities`,
     }),
@@ -267,9 +217,7 @@ const resourceMap = {
       avatar_src: mxcUrlToHttp(rd.avatar_url),
     }),
     data: "chunk",
-    total: json => {
-      return json.total_room_count_estimate;
-    },
+    total: json => json.total_room_count_estimate,
     create: params => ({
       endpoint: `/_matrix/client/r0/directory/list/room/${params.id}`,
       body: { visibility: "public" },
@@ -291,14 +239,9 @@ const resourceMap = {
   },
   registration_tokens: {
     path: "/_synapse/admin/v1/registration_tokens",
-    map: rt => ({
-      ...rt,
-      id: rt.token,
-    }),
+    map: rt => ({ ...rt, id: rt.token }),
     data: "registration_tokens",
-    total: json => {
-      return json.registration_tokens.length;
-    },
+    total: json => json.registration_tokens.length,
     create: params => ({
       endpoint: "/_synapse/admin/v1/registration_tokens/new",
       body: params,
@@ -308,81 +251,98 @@ const resourceMap = {
       endpoint: `/_synapse/admin/v1/registration_tokens/${params.id}`,
     }),
   },
-  
 };
-
+ 
 function filterNullValues(key, value) {
-  // Filtering out null properties
-  if (value === null) {
-    return undefined;
-  }
+  if (value === null) return undefined;
   return value;
 }
-
+ 
 function getSearchOrder(order) {
-  if (order === "DESC") {
-    return "b";
-  } else {
-    return "f";
-  }
+  return order === "DESC" ? "b" : "f";
 }
-
+ 
 const dataProvider = {
   getList: (resource, params) => {
     console.log("getList " + resource);
-    const { user_id, name, guests, deactivated, search_term, valid } =
+ 
+    if (resource === "account_history") {
+      const homeserver = localStorage.getItem("base_url");
+      if (!homeserver) return Promise.reject();
+
+      const url = `${homeserver}/_synapse/admin/v1/watcha_user_audit_log`;
+      return jsonClient(url).then(({ json }) => {
+        const logs = Array.isArray(json)
+          ? json
+          : Object.values(json).find(Array.isArray) || [];
+        const data = logs.map((log, index) => ({
+          id:           log.id != null ? log.id : `log-${index}`,
+          timestamp:    log.timestamp,
+          user_id:      log.user_id,
+          display_name: log.display_name,
+          avatar_src:   log.avatar_url ? mxcUrlToHttp(log.avatar_url) : log.avatar_src || null,
+          action:       log.action,
+        }));
+
+        return accountHistoryGetList({
+          data,
+          filter:     params.filter,
+          pagination: params.pagination,
+          sort:       params.sort,
+        });
+      });
+    }
+    // ─────────────────────────────────────────────────────────────────────
+ 
+    const { user_id, name, guests, deactivated, locked, search_term, valid } =
       params.filter;
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const from = (page - 1) * perPage;
     const query = {
-      from: from,
+      from,
       limit: perPage,
-      user_id: user_id,
-      search_term: search_term,
-      name: name,
-      guests: guests,
-      deactivated: deactivated,
-      valid: valid,
+      user_id,
+      search_term,
+      name,
+      guests,
+      deactivated,
+      locked,
+      valid,
       order_by: field,
       dir: getSearchOrder(order),
     };
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const endpoint_url = homeserver + res.path;
     const url = `${endpoint_url}?${stringify(query)}`;
-
+ 
     return jsonClient(url).then(({ json }) => ({
       data: json[res.data].map(res.map),
       total: res.total(json, from, perPage),
     }));
   },
-
+ 
   getOne: (resource, params) => {
     console.log("getOne " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const endpoint_url = homeserver + res.path;
     return jsonClient(`${endpoint_url}/${encodeURIComponent(params.id)}`).then(
-      ({ json }) => ({
-        data: res.map(json),
-      })
+      ({ json }) => ({ data: res.map(json) })
     );
   },
-
+ 
   getMany: (resource, params) => {
     console.log("getMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const endpoint_url = homeserver + res.path;
     return Promise.all(
       params.ids.map(id =>
@@ -393,96 +353,81 @@ const dataProvider = {
       total: responses.length,
     }));
   },
-
+ 
   getManyReference: (resource, params) => {
     console.log("getManyReference " + resource);
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const from = (page - 1) * perPage;
-    const query = {
-      from: from,
-      limit: perPage,
-      order_by: field,
-      dir: getSearchOrder(order),
-    };
-
+    const query = { from, limit: perPage, order_by: field, dir: getSearchOrder(order) };
+ 
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const ref = res["reference"](params.id);
     const endpoint_url = `${homeserver}${ref.endpoint}?${stringify(query)}`;
-
-    return jsonClient(endpoint_url).then(({ headers, json }) => ({
+ 
+    return jsonClient(endpoint_url).then(({ json }) => ({
       data: json[res.data].map(res.map),
       total: res.total(json, from, perPage),
     }));
   },
-
+ 
   update: (resource, params) => {
     console.log("update " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const endpoint_url = homeserver + res.path;
     return jsonClient(`${endpoint_url}/${encodeURIComponent(params.data.id)}`, {
       method: "PUT",
       body: JSON.stringify(params.data, filterNullValues),
-    }).then(({ json }) => ({
-      data: res.map(json),
-    }));
+    }).then(({ json }) => ({ data: res.map(json) }));
   },
-
+ 
   updateMany: (resource, params) => {
     console.log("updateMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     const endpoint_url = homeserver + res.path;
     return Promise.all(
-      params.ids.map(
-        id => jsonClient(`${endpoint_url}/${encodeURIComponent(id)}`),
-        {
+      params.ids.map(id =>
+        jsonClient(`${endpoint_url}/${encodeURIComponent(id)}`, {
           method: "PUT",
           body: JSON.stringify(params.data, filterNullValues),
-        }
+        })
       )
-    ).then(responses => ({
-      data: responses.map(({ json }) => json),
-    }));
+    ).then(responses => ({ data: responses.map(({ json }) => json) }));
   },
-
+ 
   create: (resource, params) => {
     console.log("create " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
     if (!("create" in res)) return Promise.reject();
-
+ 
     const create = res["create"](params.data);
     const endpoint_url = homeserver + create.endpoint;
     return jsonClient(endpoint_url, {
       method: create.method,
       body: JSON.stringify(create.body, filterNullValues),
-    }).then(({ json }) => ({
-      data: res.map(json),
-    }));
+    }).then(({ json }) => ({ data: res.map(json) }));
   },
-
+ 
   createMany: (resource, params) => {
     console.log("createMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
     if (!("create" in res)) return Promise.reject();
-
+ 
     return Promise.all(
       params.ids.map(id => {
         params.data.id = id;
@@ -493,58 +438,48 @@ const dataProvider = {
           body: JSON.stringify(cre.body, filterNullValues),
         });
       })
-    ).then(responses => ({
-      data: responses.map(({ json }) => json),
-    }));
+    ).then(responses => ({ data: responses.map(({ json }) => json) }));
   },
-
+ 
   delete: (resource, params) => {
     console.log("delete " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     if ("delete" in res) {
       const del = res["delete"](params);
       const endpoint_url = homeserver + del.endpoint;
       return jsonClient(endpoint_url, {
         method: "method" in del ? del.method : "DELETE",
         body: "body" in del ? JSON.stringify(del.body) : null,
-      }).then(({ json }) => ({
-        data: json,
-      }));
+      }).then(({ json }) => ({ data: json }));
     } else {
       const endpoint_url = homeserver + res.path;
       return jsonClient(`${endpoint_url}/${params.id}`, {
         method: "DELETE",
         body: JSON.stringify(params.data, filterNullValues),
-      }).then(({ json }) => ({
-        data: json,
-      }));
+      }).then(({ json }) => ({ data: json }));
     }
   },
-
+ 
   deleteMany: (resource, params) => {
     console.log("deleteMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
+ 
     const res = resourceMap[resource];
-
     if ("delete" in res) {
       return Promise.all(
         params.ids.map(id => {
-          const del = res["delete"]({ ...params, id: id });
+          const del = res["delete"]({ ...params, id });
           const endpoint_url = homeserver + del.endpoint;
           return jsonClient(endpoint_url, {
             method: "method" in del ? del.method : "DELETE",
             body: "body" in del ? JSON.stringify(del.body) : null,
           });
         })
-      ).then(responses => ({
-        data: responses.map(({ json }) => json),
-      }));
+      ).then(responses => ({ data: responses.map(({ json }) => json) }));
     } else {
       const endpoint_url = homeserver + res.path;
       return Promise.all(
@@ -554,11 +489,9 @@ const dataProvider = {
             body: JSON.stringify(params.data, filterNullValues),
           })
         )
-      ).then(responses => ({
-        data: responses.map(({ json }) => json),
-      }));
+      ).then(responses => ({ data: responses.map(({ json }) => json) }));
     }
   },
 };
-
+ 
 export default dataProvider;

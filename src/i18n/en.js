@@ -107,8 +107,10 @@ const en = {
         is_guest: "Guest",
         admin: "Server Administrator",
         deactivated: "Deactivated",
+        locked: "Locked",
         guests: "Show guests",
         show_deactivated: "Show deactivated users",
+        show_locked: "Show locked users",
         user_id: "Search user",
         displayname: "Displayname",
         password: "Password",
@@ -123,6 +125,7 @@ const en = {
       },
       helper: {
         deactivate: "You must provide a password to re-activate an account.",
+        lock: "Prevents the user from logging in without deleting their account.",
         erase: "Mark the user as GDPR-erased",
       },
       action: {

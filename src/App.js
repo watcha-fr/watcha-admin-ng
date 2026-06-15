@@ -8,6 +8,7 @@ import { RoomList, RoomShow } from "./components/rooms";
 import { ReportList, ReportShow } from "./components/EventReports";
 import DashboardTab from "./components/DashboardTab";
 import FileTypeFilterAdmin from "./components/FileTypeFilterAdmin";
+import AccountHistoryList from "./components/AccountHistory";
 import LoginPage from "./components/LoginPage";
 import UserIcon from "@material-ui/icons/Group";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
@@ -29,7 +30,6 @@ import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
 import chineseMessages from "./i18n/zh";
 
-// TODO: Can we use lazy loading together with browser locale?
 const messages = {
   de: germanMessages,
   en: englishMessages,
@@ -94,11 +94,18 @@ const App = () => (
     <Resource name="room_state" />
     <Resource
       name="dashboard"
-      list={DashboardTab} // <= Ça permet de lier la route /dashboard au composant
+      list={DashboardTab}
     />
     <Resource
       name="security"
       list={FileTypeFilterAdmin}
+      options={{ label: "Extensions bloquées" }}
+    />
+    <Resource
+      name="account_history"
+      list={AccountHistoryList}
+      icon={UserIcon}
+      options={{ label: "Historique des comptes" }}
     />
   </Admin>
 );
