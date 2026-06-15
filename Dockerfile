@@ -8,7 +8,7 @@ WORKDIR /src
 
 COPY . /src
 RUN npm install
-ENV NODE_OPTIONS="--openssl-legacy-provider"
+# ENV NODE_OPTIONS="--openssl-legacy-provider"
 RUN PUBLIC_URL=$PUBLIC_URL REACT_APP_SERVER=$REACT_APP_SERVER npm run build
 
 # App
