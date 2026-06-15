@@ -9,6 +9,7 @@ import { ReportList, ReportShow } from "./components/EventReports";
 import DashboardTab from "./components/DashboardTab";
 import FileTypeFilterAdmin from "./components/FileTypeFilterAdmin";
 import AccountHistoryList from "./components/AccountHistory";
+import RetentionAdmin from "./components/RetentionAdmin";
 import LoginPage from "./components/LoginPage";
 import UserIcon from "@material-ui/icons/Group";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
@@ -17,6 +18,7 @@ import { UserMediaStatsList } from "./components/statistics";
 import RoomIcon from "@material-ui/icons/ViewList";
 import ReportIcon from "@material-ui/icons/Warning";
 import FolderSharedIcon from "@material-ui/icons/FolderShared";
+import HistoryIcon from "@material-ui/icons/History";
 import { ImportFeature } from "./components/ImportFeature";
 import {
   RegistrationTokenCreate,
@@ -92,10 +94,7 @@ const App = () => (
     <Resource name="servernotices" />
     <Resource name="forward_extremities" />
     <Resource name="room_state" />
-    <Resource
-      name="dashboard"
-      list={DashboardTab}
-    />
+    <Resource name="dashboard" list={DashboardTab} />
     <Resource
       name="security"
       list={FileTypeFilterAdmin}
@@ -106,6 +105,12 @@ const App = () => (
       list={AccountHistoryList}
       icon={UserIcon}
       options={{ label: "Historique des comptes" }}
+    />
+    <Resource
+      name="message_retention"
+      list={RetentionAdmin}
+      icon={HistoryIcon}
+      options={{ label: "Profondeur des messages" }}
     />
   </Admin>
 );
