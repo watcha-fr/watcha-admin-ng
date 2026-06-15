@@ -5,9 +5,10 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // Durées proposées (en millisecondes). null = illimité (pas de durée par défaut).
 const PRESETS = [
   { id: "unlimited", label: "Illimité", ms: null },
-  { id: "1_week", label: "1 semaine", ms: 7 * DAY_MS },
   { id: "1_month", label: "1 mois", ms: 30 * DAY_MS },
+  { id: "3_months", label: "3 mois", ms: 90 * DAY_MS },
   { id: "6_months", label: "6 mois", ms: 180 * DAY_MS },
+  { id: "9_months", label: "9 mois", ms: 270 * DAY_MS },
   { id: "1_year", label: "1 an", ms: 365 * DAY_MS },
   { id: "custom", label: "Personnalisé (en jours)", ms: undefined },
 ];
