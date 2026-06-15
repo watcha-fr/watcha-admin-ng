@@ -33,7 +33,9 @@ export default function FileTypeFilterAdmin() {
         const resp = await fetch(endpoint, { headers });
         if (!resp.ok) throw new Error("Erreur lors du chargement des extensions");
         const data = await resp.json();
-        const blocked = data.blocked_extensions || [];
+        const blocked = Array.isArray(data)
+          ? data
+          : data.blocked_extensions || [];
 
         // Fusionner liste connue + bloquées
         const merged = allKnownExtensions.map(ext => ({
