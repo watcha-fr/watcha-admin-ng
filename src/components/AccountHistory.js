@@ -29,10 +29,10 @@ const ACTION_COLORS = {
 };
 
 const ACTION_LABELS = {
-  CREATE: "Création",
-  DEACTIVATE: "Désactivation",
-  REACTIVATE: "Réactivation",
-  DELETE: "Suppression",
+  CREATE: "Créé",
+  DEACTIVATE: "Désactivé",
+  REACTIVATE: "Réactivé",
+  DELETE: "Supprimé",
 };
 
 export function accountHistoryGetList({
@@ -93,13 +93,13 @@ const HistoryFilter = props => (
       source="action"
       alwaysOn
       allowEmpty
-      emptyText="Toutes les actions"
-      label="Action"
+      emptyText="Tous les états"
+      label="État"
       choices={[
-        { id: "CREATE", name: "Création" },
-        { id: "DEACTIVATE", name: "Désactivation" },
-        { id: "REACTIVATE", name: "Réactivation" },
-        { id: "DELETE", name: "Suppression" },
+        { id: "CREATE", name: "Créé" },
+        { id: "DEACTIVATE", name: "Désactivé" },
+        { id: "REACTIVATE", name: "Réactivé" },
+        { id: "DELETE", name: "Supprimé" },
       ]}
     />
   </Filter>
@@ -136,7 +136,7 @@ export const AccountHistoryList = props => {
         <FunctionField
           source="action"
           sortable={false}
-          label="Action"
+          label="État"
           render={record => {
             const style = ACTION_COLORS[record.action] || {
               background: "#f5f5f5",

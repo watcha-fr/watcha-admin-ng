@@ -1,7 +1,7 @@
 import { fetchUtils } from "react-admin";
 import { stringify } from "query-string";
 import { accountHistoryGetList } from "../components/AccountHistory";
- 
+
 // Adds the access token to all requests
 const jsonClient = (url, options = {}) => {
   const token = localStorage.getItem("access_token");
@@ -14,7 +14,7 @@ const jsonClient = (url, options = {}) => {
   }
   return fetchUtils.fetchJson(url, options);
 };
- 
+
 const mxcUrlToHttp = mxcUrl => {
   const homeserver = localStorage.getItem("base_url");
   const re = /^mxc:\/\/([^/]+)\/(\w+)/;
@@ -25,7 +25,7 @@ const mxcUrlToHttp = mxcUrl => {
   const mediaId = ret[2];
   return `${homeserver}/_matrix/media/r0/thumbnail/${serverName}/${mediaId}?width=24&height=24&method=scale`;
 };
- 
+
 const resourceMap = {
   users: {
     path: "/_synapse/admin/v2/users",
@@ -125,7 +125,9 @@ const resourceMap = {
   joined_rooms: {
     map: jr => ({ id: jr }),
     reference: id => ({
-      endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(id)}/joined_rooms`,
+      endpoint: `/_synapse/admin/v1/users/${encodeURIComponent(
+        id
+      )}/joined_rooms`,
     }),
     data: "joined_rooms",
     total: json => json.total,
@@ -252,20 +254,20 @@ const resourceMap = {
     }),
   },
 };
- 
+
 function filterNullValues(key, value) {
   if (value === null) return undefined;
   return value;
 }
- 
+
 function getSearchOrder(order) {
   return order === "DESC" ? "b" : "f";
 }
- 
+
 const dataProvider = {
   getList: (resource, params) => {
     console.log("getList " + resource);
- 
+
     if (resource === "account_history") {
       const homeserver = localStorage.getItem("base_url");
       if (!homeserver) return Promise.reject();
@@ -276,24 +278,39 @@ const dataProvider = {
           ? json
           : Object.values(json).find(Array.isArray) || [];
         const data = logs.map((log, index) => ({
-          id:           log.id != null ? log.id : `log-${index}`,
-          timestamp:    log.timestamp,
-          user_id:      log.user_id,
+          id: log.id != null ? log.id : `log-${index}`,
+          timestamp: log.timestamp,
+          user_id: log.user_id,
           display_name: log.display_name,
-          avatar_src:   log.avatar_url ? mxcUrlToHttp(log.avatar_url) : log.avatar_src || null,
-          action:       log.action,
+          avatar_src: log.avatar_url
+            ? mxcUrlToHttp(log.avatar_url)
+            : log.avatar_src || null,
+          action: log.action,
         }));
 
+        // Only return each user once with the most recent log entry
+        const uniqueUsers = {};
+        data.forEach(log => {
+          if (
+            !uniqueUsers[log.user_id] ||
+            log.timestamp > uniqueUsers[log.user_id].timestamp
+          ) {
+            uniqueUsers[log.user_id] = log;
+          }
+        });
+
+        const uniqueData = Object.values(uniqueUsers);
+
         return accountHistoryGetList({
-          data,
-          filter:     params.filter,
+          data: uniqueData,
+          filter: params.filter,
           pagination: params.pagination,
-          sort:       params.sort,
+          sort: params.sort,
         });
       });
     }
     // ─────────────────────────────────────────────────────────────────────
- 
+
     const { user_id, name, guests, deactivated, locked, search_term, valid } =
       params.filter;
     const { page, perPage } = params.pagination;
@@ -314,34 +331,34 @@ const dataProvider = {
     };
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
     const url = `${endpoint_url}?${stringify(query)}`;
- 
+
     return jsonClient(url).then(({ json }) => ({
       data: json[res.data].map(res.map),
       total: res.total(json, from, perPage),
     }));
   },
- 
+
   getOne: (resource, params) => {
     console.log("getOne " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
     return jsonClient(`${endpoint_url}/${encodeURIComponent(params.id)}`).then(
       ({ json }) => ({ data: res.map(json) })
     );
   },
- 
+
   getMany: (resource, params) => {
     console.log("getMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
     return Promise.all(
@@ -353,32 +370,37 @@ const dataProvider = {
       total: responses.length,
     }));
   },
- 
+
   getManyReference: (resource, params) => {
     console.log("getManyReference " + resource);
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const from = (page - 1) * perPage;
-    const query = { from, limit: perPage, order_by: field, dir: getSearchOrder(order) };
- 
+    const query = {
+      from,
+      limit: perPage,
+      order_by: field,
+      dir: getSearchOrder(order),
+    };
+
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const ref = res["reference"](params.id);
     const endpoint_url = `${homeserver}${ref.endpoint}?${stringify(query)}`;
- 
+
     return jsonClient(endpoint_url).then(({ json }) => ({
       data: json[res.data].map(res.map),
       total: res.total(json, from, perPage),
     }));
   },
- 
+
   update: (resource, params) => {
     console.log("update " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
     return jsonClient(`${endpoint_url}/${encodeURIComponent(params.data.id)}`, {
@@ -386,12 +408,12 @@ const dataProvider = {
       body: JSON.stringify(params.data, filterNullValues),
     }).then(({ json }) => ({ data: res.map(json) }));
   },
- 
+
   updateMany: (resource, params) => {
     console.log("updateMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
     return Promise.all(
@@ -403,15 +425,15 @@ const dataProvider = {
       )
     ).then(responses => ({ data: responses.map(({ json }) => json) }));
   },
- 
+
   create: (resource, params) => {
     console.log("create " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     if (!("create" in res)) return Promise.reject();
- 
+
     const create = res["create"](params.data);
     const endpoint_url = homeserver + create.endpoint;
     return jsonClient(endpoint_url, {
@@ -419,15 +441,15 @@ const dataProvider = {
       body: JSON.stringify(create.body, filterNullValues),
     }).then(({ json }) => ({ data: res.map(json) }));
   },
- 
+
   createMany: (resource, params) => {
     console.log("createMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     if (!("create" in res)) return Promise.reject();
- 
+
     return Promise.all(
       params.ids.map(id => {
         params.data.id = id;
@@ -440,12 +462,12 @@ const dataProvider = {
       })
     ).then(responses => ({ data: responses.map(({ json }) => json) }));
   },
- 
+
   delete: (resource, params) => {
     console.log("delete " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     if ("delete" in res) {
       const del = res["delete"](params);
@@ -462,12 +484,12 @@ const dataProvider = {
       }).then(({ json }) => ({ data: json }));
     }
   },
- 
+
   deleteMany: (resource, params) => {
     console.log("deleteMany " + resource);
     const homeserver = localStorage.getItem("base_url");
     if (!homeserver || !(resource in resourceMap)) return Promise.reject();
- 
+
     const res = resourceMap[resource];
     if ("delete" in res) {
       return Promise.all(
@@ -493,5 +515,5 @@ const dataProvider = {
     }
   },
 };
- 
+
 export default dataProvider;
