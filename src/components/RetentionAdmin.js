@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ModuleNotInstalled from "./ModuleNotInstalled";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -27,6 +28,7 @@ export default function RetentionAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [notInstalled, setNotInstalled] = useState(false);
 
   const homeserver = localStorage.getItem("base_url");
   const token = localStorage.getItem("access_token");
@@ -55,10 +57,7 @@ export default function RetentionAdmin() {
         setAllowOverride(data.allow_room_override !== false);
       } catch (err) {
         console.error(err);
-        setMessage({
-          type: "error",
-          text: "Impossible de charger la configuration.",
-        });
+        setNotInstalled(true);
       } finally {
         setLoading(false);
       }
@@ -111,6 +110,9 @@ export default function RetentionAdmin() {
   };
 
   if (loading) return <div style={{ padding: "20px" }}>Chargement...</div>;
+
+  if (notInstalled)
+    return <ModuleNotInstalled title="Profondeur des messages" />;
 
   return (
     <div

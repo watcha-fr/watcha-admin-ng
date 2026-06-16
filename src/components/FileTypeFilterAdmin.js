@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import ModuleNotInstalled from "./ModuleNotInstalled";
 
 export default function FileTypeFilterAdmin() {
   const [extensions, setExtensions] = useState([]);
   const [newExt, setNewExt] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [notInstalled, setNotInstalled] = useState(false);
 
   const homeserver = localStorage.getItem("base_url");
   const token = localStorage.getItem("access_token");
@@ -53,6 +55,7 @@ export default function FileTypeFilterAdmin() {
         setExtensions(merged);
       } catch (err) {
         console.error(err);
+        setNotInstalled(true);
       } finally {
         setLoading(false);
       }
@@ -95,6 +98,11 @@ export default function FileTypeFilterAdmin() {
   };
 
   if (loading) return <div>Chargement...</div>;
+
+  if (notInstalled)
+    return (
+      <ModuleNotInstalled title="Gestion des extensions de fichiers bloquées" />
+    );
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>

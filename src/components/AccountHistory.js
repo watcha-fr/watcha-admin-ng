@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -12,6 +12,7 @@ import {
   SelectInput,
   TextField,
 } from "react-admin";
+import ModuleNotInstalled from "./ModuleNotInstalled";
 
 const useStyles = makeStyles({
   small: {
@@ -173,4 +174,45 @@ export const AccountHistoryList = props => {
   );
 };
 
-export default AccountHistoryList;
+// Avant d'afficher la liste (qui passe par le dataProvider react-admin et
+// déclencherait un toast d'erreur en cas d'échec), on sonde l'endpoint. S'il
+// répond en erreur (module absent du serveur), on affiche un message dédié.
+const AccountHistory = props => {
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const homeserver = localStorage.getItem("base_url");
+    const token = localStorage.getItem("access_token");
+
+    if (!homeserver) {
+      setStatus("not-installed");
+      return;
+    }
+
+    let cancelled = false;
+    fetch(`${homeserver}/_synapse/admin/v1/watcha_user_audit_log`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(resp => {
+        if (cancelled) return;
+        setStatus(resp.ok ? "ok" : "not-installed");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("not-installed");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (status === "loading")
+    return <div style={{ padding: "20px" }}>Chargement...</div>;
+
+  if (status === "not-installed")
+    return <ModuleNotInstalled title="Historique des comptes" />;
+
+  return <AccountHistoryList {...props} />;
+};
+
+export default AccountHistory;
