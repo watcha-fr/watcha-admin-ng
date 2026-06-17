@@ -9,6 +9,7 @@ import PermMediaIcon from "@material-ui/icons/PermMedia";
 import PersonPinIcon from "@material-ui/icons/PersonPin";
 import SettingsInputComponentIcon from "@material-ui/icons/SettingsInputComponent";
 import ViewListIcon from "@material-ui/icons/ViewList";
+import jsonExport from "jsonexport/dist";
 import {
   ArrayInput,
   ArrayField,
@@ -46,6 +47,7 @@ import {
   TopToolbar,
   sanitizeListRestProps,
   NumberField,
+  downloadCSV,
 } from "react-admin";
 import { Link } from "react-router-dom";
 import { ServerNoticeButton, ServerNoticeBulkButton } from "./ServerNotices";
@@ -78,6 +80,63 @@ const date_format = {
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
+};
+
+// Exporteur custom : récupère l'email (threepids) de chaque utilisateur
+// avant de générer le CSV, car cette donnée n'est pas présente dans la
+// réponse de la liste des utilisateurs, seulement dans le détail.
+// Ajoute également une colonne "domain" extraite de la partie après le @.
+const exporter = async (users, fetchRelatedRecords, dataProvider) => {
+  const usersWithEmail = await Promise.all(
+    users.map(async user => {
+      try {
+        const { data } = await dataProvider.getOne("users", { id: user.id });
+        const email = (data.threepids || [])
+          .filter(tp => tp.medium === "email")
+          .map(tp => tp.address)
+          .join(", ");
+        const domain = email.includes("@") ? email.split("@").pop() : "";
+        return { ...user, email, domain };
+      } catch (error) {
+        // Si la récupération échoue pour un utilisateur, on continue
+        // sans bloquer tout l'export.
+        return { ...user, email: "", domain: "" };
+      }
+    })
+  );
+
+  // On nettoie les champs non pertinents / non sérialisables proprement
+  // pour le CSV (avatar, objets imbriqués, etc.)
+  const usersForExport = usersWithEmail.map(user => {
+    const {
+      avatar_src,
+      avatar_url,
+      threepids,
+      external_ids,
+      ...userForExport
+    } = user;
+    return userForExport;
+  });
+
+  jsonExport(
+    usersForExport,
+    {
+      headers: [
+        "id",
+        "displayname",
+        "email",
+        "domain",
+        "is_guest",
+        "admin",
+        "locked",
+        "deactivated",
+        "creation_ts",
+      ],
+    },
+    (err, csv) => {
+      downloadCSV(csv, "users");
+    }
+  );
 };
 
 const UserListActions = ({
@@ -178,6 +237,7 @@ export const UserList = props => {
       actions={<UserListActions maxResults={10000} />}
       bulkActionButtons={<UserBulkActionButtons />}
       pagination={<UserPagination />}
+      exporter={exporter}
     >
       <Datagrid rowClick="edit">
         <AvatarField
