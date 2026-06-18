@@ -311,11 +311,64 @@ const dataProvider = {
     }
     // ─────────────────────────────────────────────────────────────────────
 
-    const { user_id, name, guests, deactivated, locked, search_term, valid } =
-      params.filter;
+    const {
+      user_id,
+      name,
+      guests,
+      deactivated,
+      locked,
+      status_filter,
+      search_term,
+      valid,
+    } = params.filter;
+    const deactivated_only =
+      status_filter === "deactivated" ||
+      status_filter === "deactivated_locked";
+    const locked_only =
+      status_filter === "locked" || status_filter === "deactivated_locked";
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
     const from = (page - 1) * perPage;
+
+    const homeserver = localStorage.getItem("base_url");
+    if (!homeserver || !(resource in resourceMap)) return Promise.reject();
+
+    const res = resourceMap[resource];
+    const endpoint_url = homeserver + res.path;
+
+    // Filtres "uniquement désactivés" / "uniquement verrouillés".
+    // L'API Synapse ne sait qu'*inclure* ces comptes, pas restreindre la liste
+    // à ceux-ci. On récupère donc l'ensemble correspondant, on filtre côté
+    // client puis on pagine localement afin que le compteur reste exact.
+    if (resource === "users" && (deactivated_only || locked_only)) {
+      const query = {
+        from: 0,
+        limit: 1000000,
+        user_id,
+        search_term,
+        name,
+        // un filtre statut court-circuite les switchs "Afficher" : on récupère
+        // l'ensemble le plus large (visiteurs + désactivés + verrouillés) afin
+        // de ne manquer aucun compte ciblé (ex. un user verrouillé ET désactivé).
+        guests: true,
+        deactivated: true,
+        locked: true,
+        valid,
+        order_by: field,
+        dir: getSearchOrder(order),
+      };
+      const url = `${endpoint_url}?${stringify(query)}`;
+      return jsonClient(url).then(({ json }) => {
+        let data = json[res.data].map(res.map);
+        if (deactivated_only) data = data.filter(u => u.deactivated);
+        if (locked_only) data = data.filter(u => u.locked);
+        return {
+          data: data.slice(from, from + perPage),
+          total: data.length,
+        };
+      });
+    }
+
     const query = {
       from,
       limit: perPage,
@@ -329,11 +382,6 @@ const dataProvider = {
       order_by: field,
       dir: getSearchOrder(order),
     };
-    const homeserver = localStorage.getItem("base_url");
-    if (!homeserver || !(resource in resourceMap)) return Promise.reject();
-
-    const res = resourceMap[resource];
-    const endpoint_url = homeserver + res.path;
     const url = `${endpoint_url}?${stringify(query)}`;
 
     return jsonClient(url).then(({ json }) => ({

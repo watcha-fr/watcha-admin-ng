@@ -49,6 +49,7 @@ import {
   NumberField,
   downloadCSV,
 } from "react-admin";
+import { useForm, useFormState } from "react-final-form";
 import { Link } from "react-router-dom";
 import { ServerNoticeButton, ServerNoticeBulkButton } from "./ServerNotices";
 import { DeviceRemoveButton } from "./devices";
@@ -70,6 +71,21 @@ const useStyles = makeStyles({
     height: "120px",
     width: "120px",
     float: "right",
+  },
+  // Première ligne : recherche + sélecteur de statut.
+  // Le pseudo-élément (flex item de largeur 100%) force le passage à la ligne,
+  // puis les 3 switchs "Afficher" se placent sur la seconde ligne.
+  filterForm: {
+    "& .filter-field[data-source='name']": { order: 1 },
+    "& .filter-field[data-source='status_filter']": { order: 2 },
+    "&::before": {
+      content: '""',
+      width: "100%",
+      order: 3,
+    },
+    "& .filter-field[data-source='guests']": { order: 4 },
+    "& .filter-field[data-source='deactivated']": { order: 5 },
+    "& .filter-field[data-source='locked']": { order: 6 },
   },
 });
 
@@ -193,22 +209,70 @@ const UserPagination = props => (
   <Pagination {...props} rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]} />
 );
 
-const UserFilter = props => (
-  <Filter {...props}>
-    <SearchInput source="name" alwaysOn />
-    <BooleanInput source="guests" alwaysOn />
-    <BooleanInput
-      label="resources.users.fields.show_deactivated"
-      source="deactivated"
-      alwaysOn
-    />
-    <BooleanInput
-      label="resources.users.fields.show_locked"
-      source="locked"
-      alwaysOn
-    />
-  </Filter>
-);
+// Switch "Afficher ..." piloté par le filtre statut : dès qu'un statut autre
+// que "Tout le monde" est sélectionné, on force l'affichage (ON) et on
+// verrouille le switch tant qu'on n'est pas revenu au filtre par défaut, afin
+// que le filtre statut court-circuite bien les switchs.
+const ShowToggleInput = ({ resetValue = false, ...props }) => {
+  const { values } = useFormState({ subscription: { values: true } });
+  const form = useForm();
+  const statusActive = !!values.status_filter;
+  const prevActive = React.useRef(statusActive);
+  React.useEffect(() => {
+    if (statusActive && !prevActive.current) {
+      // entrée dans un filtre statut : on force l'affichage
+      form.change(props.source, true);
+    } else if (!statusActive && prevActive.current) {
+      // retour à "Tout le monde" : on rétablit la valeur par défaut
+      form.change(props.source, resetValue);
+    }
+    prevActive.current = statusActive;
+  }, [statusActive, form, props.source, resetValue]);
+  return <BooleanInput {...props} disabled={statusActive} />;
+};
+
+const UserFilter = props => {
+  const classes = useStyles();
+  return (
+    <Filter {...props} classes={{ form: classes.filterForm }}>
+      <SearchInput source="name" alwaysOn />
+      <SelectInput
+        source="status_filter"
+        alwaysOn
+        allowEmpty
+        emptyText="resources.users.fields.status_filter_all"
+        label="resources.users.fields.status_filter"
+        choices={[
+          {
+            id: "deactivated",
+            name: "resources.users.fields.status_filter_deactivated",
+          },
+          {
+            id: "locked",
+            name: "resources.users.fields.status_filter_locked",
+          },
+          {
+            id: "deactivated_locked",
+            name: "resources.users.fields.status_filter_deactivated_locked",
+          },
+        ]}
+      />
+      <ShowToggleInput source="guests" alwaysOn resetValue={true} />
+      <ShowToggleInput
+        label="resources.users.fields.show_deactivated"
+        source="deactivated"
+        alwaysOn
+        resetValue={false}
+      />
+      <ShowToggleInput
+        label="resources.users.fields.show_locked"
+        source="locked"
+        alwaysOn
+        resetValue={false}
+      />
+    </Filter>
+  );
+};
 
 const UserBulkActionButtons = props => (
   <Fragment>

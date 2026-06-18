@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   BooleanField,
@@ -19,6 +19,7 @@ import {
   TabbedShowLayout,
   TextField,
   TopToolbar,
+  useDataProvider,
   useRecordContext,
   useTranslate,
 } from "react-admin";
@@ -34,6 +35,8 @@ import UserIcon from "@material-ui/icons/Group";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EventIcon from "@material-ui/icons/Event";
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
 import {
   RoomDirectoryJoinButton,
   RoomDirectoryBulkDeleteButton,
@@ -84,6 +87,105 @@ const EncryptionField = ({ source, record = {}, emptyText }) => {
   return (
     <Typography component="span" variant="body2">
       {emptyText}
+    </Typography>
+  );
+};
+
+// Provides the room's `m.room.power_levels` content to the members datagrid so
+// that each member row can tell whether the user is a room administrator.
+const RoomPowerLevelsContext = React.createContext(null);
+
+const RoomMembers = props => {
+  const record = useRecordContext(props);
+  const roomId = record && record.id;
+  const dataProvider = useDataProvider();
+  const [powerLevels, setPowerLevels] = useState(null);
+
+  useEffect(() => {
+    if (!roomId) return;
+    let active = true;
+    dataProvider
+      .getManyReference("room_state", {
+        target: "room_id",
+        id: roomId,
+        pagination: { page: 1, perPage: 1000 },
+        sort: { field: "type", order: "ASC" },
+        filter: {},
+      })
+      .then(({ data }) => {
+        if (!active) return;
+        const event = data.find(e => e.type === "m.room.power_levels");
+        setPowerLevels(event ? event.content : null);
+      })
+      .catch(() => {
+        if (active) setPowerLevels(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [roomId, dataProvider]);
+
+  return (
+    <RoomPowerLevelsContext.Provider value={powerLevels}>
+      <ReferenceManyField
+        reference="room_members"
+        target="room_id"
+        addLabel={false}
+      >
+        <Datagrid
+          style={{ width: "100%" }}
+          rowClick={(id, basePath, record) => "/users/" + id}
+        >
+          <TextField
+            source="id"
+            sortable={false}
+            label="resources.users.fields.id"
+          />
+          <ReferenceField
+            label="resources.users.fields.displayname"
+            source="id"
+            reference="users"
+            sortable={false}
+            link=""
+          >
+            <TextField source="displayname" sortable={false} />
+          </ReferenceField>
+          <RoomAdminField
+            label="resources.rooms.fields.is_room_admin"
+            sortable={false}
+          />
+        </Datagrid>
+      </ReferenceManyField>
+    </RoomPowerLevelsContext.Provider>
+  );
+};
+
+// A member is considered a room administrator when their power level reaches
+// 100 (the default power level required to administer a Matrix room).
+const RoomAdminField = ({ record = {} }) => {
+  const translate = useTranslate();
+  const powerLevels = useContext(RoomPowerLevelsContext);
+
+  if (!powerLevels) {
+    return null;
+  }
+
+  const users = powerLevels.users || {};
+  const defaultLevel =
+    powerLevels.users_default !== undefined ? powerLevels.users_default : 0;
+  const level = users[record.id] !== undefined ? users[record.id] : defaultLevel;
+  const isAdmin = level >= 100;
+  const ariaLabel = isAdmin ? "ra.boolean.true" : "ra.boolean.false";
+
+  return (
+    <Typography component="span" variant="body2">
+      <Tooltip title={translate(ariaLabel, { _: ariaLabel })}>
+        {isAdmin ? (
+          <CheckIcon data-testid="true" htmlColor="limegreen" />
+        ) : (
+          <ClearIcon data-testid="false" color="error" />
+        )}
+      </Tooltip>
     </Typography>
   );
 };
@@ -165,31 +267,7 @@ export const RoomShow = props => {
           icon={<UserIcon />}
           path="members"
         >
-          <ReferenceManyField
-            reference="room_members"
-            target="room_id"
-            addLabel={false}
-          >
-            <Datagrid
-              style={{ width: "100%" }}
-              rowClick={(id, basePath, record) => "/users/" + id}
-            >
-              <TextField
-                source="id"
-                sortable={false}
-                label="resources.users.fields.id"
-              />
-              <ReferenceField
-                label="resources.users.fields.displayname"
-                source="id"
-                reference="users"
-                sortable={false}
-                link=""
-              >
-                <TextField source="displayname" sortable={false} />
-              </ReferenceField>
-            </Datagrid>
-          </ReferenceManyField>
+          <RoomMembers />
         </Tab>
 
         <Tab
