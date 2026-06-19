@@ -126,7 +126,9 @@ export default function RetentionAdmin() {
       <p style={{ color: "#555" }}>
         Définissez la durée de conservation par défaut des messages pour les
         salons du serveur. Au-delà de cette durée, les messages sont purgés (les
-        messages épinglés sont toujours conservés).
+        messages épinglés sont toujours conservés). Cette durée constitue aussi
+        le <strong>maximum</strong> qu'un administrateur de salon peut choisir
+        lorsque le paramétrage par salon est autorisé.
       </p>
 
       <div style={{ marginTop: "20px" }}>
@@ -183,8 +185,9 @@ export default function RetentionAdmin() {
           }}
         >
           Si activé, un menu « Rétention des messages » apparaît dans les
-          paramètres de chaque salon et surpasse la durée par défaut. Si
-          désactivé, ce menu est masqué.
+          paramètres de chaque salon : l'administrateur du salon peut alors
+          choisir une durée plus courte, sans jamais dépasser la durée par
+          défaut ci-dessus. Si désactivé, ce menu est masqué.
         </p>
       </div>
 
