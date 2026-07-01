@@ -1,4 +1,10 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, {
+  cloneElement,
+  Fragment,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { connect } from "react-redux";
 import {
   BooleanField,
@@ -6,6 +12,7 @@ import {
   DateField,
   Datagrid,
   DeleteButton,
+  ExportButton,
   Filter,
   List,
   NumberField,
@@ -19,10 +26,13 @@ import {
   TabbedShowLayout,
   TextField,
   TopToolbar,
+  downloadCSV,
+  sanitizeListRestProps,
   useDataProvider,
   useRecordContext,
   useTranslate,
 } from "react-admin";
+import jsonExport from "jsonexport/dist";
 import get from "lodash/get";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -386,6 +396,93 @@ export const RoomShow = props => {
   );
 };
 
+// Exporteur custom des salons. Le bouton d'export de react-admin est limité
+// par défaut à 1000 enregistrements ; on le remplace donc par un ExportButton
+// dont le `maxResults` est relevé (voir RoomListActions) afin d'exporter la
+// totalité des salons. On en profite pour retirer les champs dérivés / dupliqués
+// du dataProvider (alias, members) et pour figer l'ordre des colonnes du CSV.
+const exporter = rooms => {
+  const roomsForExport = rooms.map(room => {
+    const { alias, members, ...roomForExport } = room;
+    return roomForExport;
+  });
+
+  jsonExport(
+    roomsForExport,
+    {
+      headers: [
+        "id",
+        "name",
+        "canonical_alias",
+        "creator",
+        "joined_members",
+        "joined_local_members",
+        "joined_local_devices",
+        "state_events",
+        "version",
+        "encryption",
+        "is_encrypted",
+        "federatable",
+        "public",
+        "join_rules",
+        "guest_access",
+        "history_visibility",
+      ],
+    },
+    (err, csv) => {
+      downloadCSV(csv, "rooms");
+    }
+  );
+};
+
+// Actions de la liste des salons. On redéfinit la barre d'outils uniquement
+// pour pouvoir passer un `maxResults` élevé à l'ExportButton et ainsi exporter
+// tous les salons (et pas seulement les 1000 premiers). Même approche que pour
+// la liste des utilisateurs.
+const RoomListActions = ({
+  currentSort,
+  className,
+  resource,
+  filters,
+  displayedFilters,
+  exporter,
+  filterValues,
+  permanentFilter,
+  basePath,
+  selectedIds,
+  onUnselectItems,
+  showFilter,
+  maxResults,
+  total,
+  ...rest
+}) => {
+  return (
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      {filters &&
+        cloneElement(filters, {
+          resource,
+          showFilter,
+          displayedFilters,
+          filterValues,
+          context: "button",
+        })}
+      <ExportButton
+        disabled={total === 0}
+        resource={resource}
+        sort={currentSort}
+        filter={{ ...filterValues, ...permanentFilter }}
+        exporter={exporter}
+        maxResults={maxResults}
+      />
+    </TopToolbar>
+  );
+};
+
+RoomListActions.defaultProps = {
+  selectedIds: [],
+  onUnselectItems: () => null,
+};
+
 const RoomBulkActionButtons = props => (
   <Fragment>
     <RoomDirectoryBulkSaveButton {...props} />
@@ -460,6 +557,8 @@ const FilterableRoomList = ({ roomFilters, dispatch, ...props }) => {
       pagination={<RoomPagination />}
       sort={{ field: "name", order: "ASC" }}
       filters={<RoomFilter />}
+      actions={<RoomListActions maxResults={100000} />}
+      exporter={exporter}
       bulkActionButtons={<RoomBulkActionButtons />}
     >
       <Datagrid rowClick="show">
