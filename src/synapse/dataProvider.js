@@ -26,6 +26,37 @@ const mxcUrlToHttp = mxcUrl => {
   return `${homeserver}/_matrix/media/r0/thumbnail/${serverName}/${mediaId}?width=24&height=24&method=scale`;
 };
 
+// Extrait l'adresse électronique d'une liste de "threepids" Matrix.
+const emailFromThreepids = threepids =>
+  (threepids || [])
+    .filter(tp => tp.medium === "email")
+    .map(tp => tp.address)
+    .join(", ");
+
+// Complète les entrées d'historique avec l'adresse électronique du compte.
+// Celle-ci n'est pas toujours fournie par l'endpoint d'audit : dans ce cas on
+// interroge le détail de l'utilisateur (threepids). On ne le fait que pour les
+// lignes de la page affichée, et un compte supprimé peut ne plus être connu du
+// serveur : l'adresse reste alors vide.
+const withAccountEmails = logs =>
+  Promise.all(
+    logs.map(async log => {
+      if (log.email) return log;
+
+      const homeserver = localStorage.getItem("base_url");
+      try {
+        const { json } = await jsonClient(
+          `${homeserver}/_synapse/admin/v2/users/${encodeURIComponent(
+            log.user_id
+          )}`
+        );
+        return { ...log, email: emailFromThreepids(json.threepids) };
+      } catch (error) {
+        return { ...log, email: "" };
+      }
+    })
+  );
+
 const resourceMap = {
   users: {
     path: "/_synapse/admin/v2/users",
@@ -286,6 +317,7 @@ const dataProvider = {
             ? mxcUrlToHttp(log.avatar_url)
             : log.avatar_src || null,
           action: log.action,
+          email: log.email || emailFromThreepids(log.threepids),
         }));
 
         // Only return each user once with the most recent log entry
@@ -301,12 +333,17 @@ const dataProvider = {
 
         const uniqueData = Object.values(uniqueUsers);
 
-        return accountHistoryGetList({
+        const page = accountHistoryGetList({
           data: uniqueData,
           filter: params.filter,
           pagination: params.pagination,
           sort: params.sort,
         });
+
+        return withAccountEmails(page.data).then(data => ({
+          ...page,
+          data,
+        }));
       });
     }
     // ─────────────────────────────────────────────────────────────────────

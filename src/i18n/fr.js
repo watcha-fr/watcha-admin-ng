@@ -381,5 +381,15 @@ const fr = {
     name: "Tableau de bord",
     title: "Tableau de bord",
   },
+  ra: {
+    ...frenchMessages.ra,
+    navigation: {
+      ...frenchMessages.ra.navigation,
+      // « ra.navigation.prev » a été renommé en « previous » dans les paquets de
+      // traduction v4, mais react-admin v3 utilise toujours l'ancienne clé pour
+      // le bouton de page précédente : sans cet alias, la clé brute s'affiche.
+      prev: frenchMessages.ra.navigation.previous,
+    },
+  },
 };
 export default fr;

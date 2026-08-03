@@ -48,7 +48,8 @@ export function accountHistoryGetList({
     rows = rows.filter(
       r =>
         (r.user_id || "").toLowerCase().includes(q) ||
-        (r.display_name || "").toLowerCase().includes(q)
+        (r.display_name || "").toLowerCase().includes(q) ||
+        (r.email || "").toLowerCase().includes(q)
     );
   }
 
@@ -131,6 +132,13 @@ export const AccountHistoryList = props => {
           source="display_name"
           sortable={false}
           label="Nom d'affichage"
+        />
+
+        <TextField
+          source="email"
+          sortable={false}
+          label="Adresse électronique"
+          emptyText="—"
         />
 
         <FunctionField
