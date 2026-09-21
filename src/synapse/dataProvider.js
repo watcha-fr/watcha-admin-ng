@@ -27,25 +27,6 @@ const mxcUrlToHttp = mxcUrl => {
 };
 
 // watcha+
-// L'identifiant est indispensable pour construire l'URL de l'API
-// d'administration. L'administrateur peut désormais le laisser vide — il ne le
-// renseigne que pour préprovisionner un compte sous l'identifiant de son
-// fournisseur d'identité — auquel cas on en tire un au sort, comme le fait déjà
-// l'import CSV.
-const randomLocalpart = () =>
-  Array(12)
-    .fill("0123456789abcdefghijklmnopqrstuvwxyz")
-    .map(
-      x =>
-        x[
-          Math.floor(
-            (crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) *
-              x.length
-          )
-        ]
-    )
-    .join("");
-
 // Le formulaire porte l'adresse dans un champ dédié ; l'API d'administration
 // l'attend parmi les identifiants tiers, d'où Synapse la relit pour créer le
 // compte chez le fournisseur d'identité.
@@ -92,13 +73,38 @@ const resourceMap = {
     }),
     !watcha */
     // watcha+
-    create: data => ({
-      endpoint: `/_synapse/admin/v2/users/@${encodeURIComponent(
-        data.id || randomLocalpart()
-      )}:${localStorage.getItem("home_server")}`,
-      body: emailAsThreepid(data),
-      method: "PUT",
-    }),
+    // Deux gestes distincts derrière le même bouton.
+    //
+    // Sans identifiant : un compte ordinaire. On passe par le hub, qui laisse
+    // le fournisseur d'identité fabriquer l'identifiant — exactement comme une
+    // invitation. Inventer un identifiant ici créerait une troisième
+    // convention, ni lisible ni celle du fournisseur d'identité.
+    //
+    // Avec un identifiant : un préprovisionnement. Le compte est créé sous
+    // l'identifiant que son annuaire lui donnera, par l'API d'administration,
+    // qui l'exige dans son URL.
+    create: data => {
+      if (!data.id) {
+        return {
+          endpoint: "/_matrix/client/r0/watcha_register",
+          body: {
+            email: data.email,
+            displayname: data.displayname,
+            admin: data.admin,
+          },
+          method: "POST",
+          // Le hub ne renvoie que l'identifiant du compte créé.
+          map: json => ({ id: json.user_id }),
+        };
+      }
+      return {
+        endpoint: `/_synapse/admin/v2/users/@${encodeURIComponent(
+          data.id
+        )}:${localStorage.getItem("home_server")}`,
+        body: emailAsThreepid(data),
+        method: "PUT",
+      };
+    },
     // +watcha
     delete: params => ({
       endpoint: `/_synapse/admin/v1/deactivate/${encodeURIComponent(
@@ -539,7 +545,14 @@ const dataProvider = {
     return jsonClient(endpoint_url, {
       method: create.method,
       body: JSON.stringify(create.body, filterNullValues),
+      /* watcha!
     }).then(({ json }) => ({ data: res.map(json) }));
+      !watcha */
+      // watcha+
+      // Une création peut répondre autre chose qu'un enregistrement complet :
+      // le descripteur fournit alors sa propre lecture de la réponse.
+    }).then(({ json }) => ({ data: (create.map || res.map)(json) }));
+    // +watcha
   },
 
   createMany: (resource, params) => {

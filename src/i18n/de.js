@@ -131,7 +131,7 @@ const de = {
         auth_provider: "Provider",
       },
       helper: {
-        optional_id: "Optional. Auszufüllen, um ein Konto unter der Kennung seines Identitätsanbieters vorab anzulegen, etwa eines LDAP-Verzeichnisses. Leer gelassen, wird eine zufällig erzeugt.", // watcha+
+        optional_id: "Optional. Auszufüllen, um ein Konto unter der Kennung seines Identitätsanbieters vorab anzulegen, etwa eines LDAP-Verzeichnisses. Leer gelassen, wird die vom Identitätsanbieter vergebene Kennung verwendet.", // watcha+
         deactivate:
           "Sie müssen ein Passwort angeben, um ein Konto wieder zu aktivieren.",
         lock: "Verhindert die Anmeldung des Benutzers, ohne sein Konto zu löschen.",
