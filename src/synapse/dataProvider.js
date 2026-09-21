@@ -91,6 +91,9 @@ const resourceMap = {
             email: data.email,
             displayname: data.displayname,
             admin: data.admin,
+            // Absent, le serveur envoie : c'est le comportement de
+            // l'invitation, et la case est cochée par défaut.
+            send_email: data.send_email !== false,
           },
           method: "POST",
           // Le hub ne renvoie que l'identifiant du compte créé.

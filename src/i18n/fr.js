@@ -122,6 +122,7 @@ const fr = {
         status_filter_deactivated_locked: "Désactivés et verrouillés",
         user_id: "Rechercher un utilisateur",
         email: "Adresse électronique", // watcha+
+        send_email: "Envoyer le courriel de bienvenue", // watcha+
         displayname: "Nom d'affichage",
         password: "Mot de passe",
         avatar_url: "URL de l'avatar",
@@ -135,6 +136,7 @@ const fr = {
       },
       helper: {
         optional_id: "Facultatif. À renseigner pour préprovisionner un compte sous l'identifiant de son fournisseur d'identité, un annuaire LDAP par exemple. Laissé vide, l'identifiant est celui attribué par le fournisseur d'identité.", // watcha+
+        send_email: "Il porte le mot de passe du compte. Sans identifiant saisi, la personne se connecte avec ce mot de passe.", // watcha+
         deactivate: "Vous devrez fournir un mot de passe pour réactiver le compte.",
         lock: "Empêche l'utilisateur de se connecter sans supprimer son compte.",
         erase: "Marquer l'utilisateur comme effacé conformément au RGPD",

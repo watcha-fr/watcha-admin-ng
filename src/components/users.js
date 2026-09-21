@@ -27,6 +27,7 @@ import {
   FormTab,
   BooleanField,
   BooleanInput,
+  FormDataConsumer, // watcha+
   PasswordInput,
   TextField,
   TextInput,
@@ -434,6 +435,22 @@ export const UserCreate = props => (
         helperText="resources.users.helper.optional_id"
       />
       <TextInput source="displayname" validate={maxLength(256)} />
+      {/* Le courriel de bienvenue porte le mot de passe : il n'a de sens que
+          pour un compte ordinaire. Un compte préprovisionné sous l'identifiant
+          d'un annuaire se connecte par son fournisseur d'identité, sans mot de
+          passe à recevoir — la case disparaît donc dès qu'un identifiant est
+          saisi, plutôt que de rester là sans effet. */}
+      <FormDataConsumer>
+        {({ formData }) =>
+          !formData.id && (
+            <BooleanInput
+              source="send_email"
+              defaultValue={true}
+              helperText="resources.users.helper.send_email"
+            />
+          )
+        }
+      </FormDataConsumer>
       {/* +watcha */}
       <BooleanInput source="admin" />
       <ArrayInput source="threepids">
