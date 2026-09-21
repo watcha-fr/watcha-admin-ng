@@ -122,7 +122,7 @@ const fr = {
         status_filter_deactivated_locked: "Désactivés et verrouillés",
         user_id: "Rechercher un utilisateur",
         email: "Adresse électronique", // watcha+
-        send_email: "Envoyer le courriel de bienvenue", // watcha+
+        send_email: "Envoyer l'email de bienvenue", // watcha+
         displayname: "Nom d'affichage",
         password: "Mot de passe",
         avatar_url: "URL de l'avatar",
