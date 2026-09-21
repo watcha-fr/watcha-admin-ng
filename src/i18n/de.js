@@ -118,6 +118,7 @@ const de = {
         status_filter_locked: "Nur gesperrte",
         status_filter_deactivated_locked: "Deaktivierte und gesperrte",
         user_id: "Suche Benutzer",
+        email: "E-Mail-Adresse", // watcha+
         displayname: "Anzeigename",
         password: "Passwort",
         avatar_url: "Avatar URL",
@@ -130,6 +131,7 @@ const de = {
         auth_provider: "Provider",
       },
       helper: {
+        optional_id: "Optional. Auszufüllen, um ein Konto unter der Kennung seines Identitätsanbieters vorab anzulegen, etwa eines LDAP-Verzeichnisses. Leer gelassen, wird eine zufällig erzeugt.", // watcha+
         deactivate:
           "Sie müssen ein Passwort angeben, um ein Konto wieder zu aktivieren.",
         lock: "Verhindert die Anmeldung des Benutzers, ohne sein Konto zu löschen.",

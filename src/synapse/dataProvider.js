@@ -26,6 +26,47 @@ const mxcUrlToHttp = mxcUrl => {
   return `${homeserver}/_matrix/media/r0/thumbnail/${serverName}/${mediaId}?width=24&height=24&method=scale`;
 };
 
+// watcha+
+// L'identifiant est indispensable pour construire l'URL de l'API
+// d'administration. L'administrateur peut désormais le laisser vide — il ne le
+// renseigne que pour préprovisionner un compte sous l'identifiant de son
+// fournisseur d'identité — auquel cas on en tire un au sort, comme le fait déjà
+// l'import CSV.
+const randomLocalpart = () =>
+  Array(12)
+    .fill("0123456789abcdefghijklmnopqrstuvwxyz")
+    .map(
+      x =>
+        x[
+          Math.floor(
+            (crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1)) *
+              x.length
+          )
+        ]
+    )
+    .join("");
+
+// Le formulaire porte l'adresse dans un champ dédié ; l'API d'administration
+// l'attend parmi les identifiants tiers, d'où Synapse la relit pour créer le
+// compte chez le fournisseur d'identité.
+const emailAsThreepid = data => {
+  const { email, ...rest } = data;
+  if (!email) return rest;
+
+  const threepids = rest.threepids || [];
+  const alreadyListed = threepids.some(
+    threepid => threepid.medium === "email" && threepid.address === email
+  );
+
+  return {
+    ...rest,
+    threepids: alreadyListed
+      ? threepids
+      : [{ medium: "email", address: email }, ...threepids],
+  };
+};
+// +watcha
+
 const resourceMap = {
   users: {
     path: "/_synapse/admin/v2/users",
@@ -41,6 +82,7 @@ const resourceMap = {
     }),
     data: "users",
     total: json => json.total,
+    /* watcha!
     create: data => ({
       endpoint: `/_synapse/admin/v2/users/@${encodeURIComponent(
         data.id
@@ -48,6 +90,16 @@ const resourceMap = {
       body: data,
       method: "PUT",
     }),
+    !watcha */
+    // watcha+
+    create: data => ({
+      endpoint: `/_synapse/admin/v2/users/@${encodeURIComponent(
+        data.id || randomLocalpart()
+      )}:${localStorage.getItem("home_server")}`,
+      body: emailAsThreepid(data),
+      method: "PUT",
+    }),
+    // +watcha
     delete: params => ({
       endpoint: `/_synapse/admin/v1/deactivate/${encodeURIComponent(
         params.id

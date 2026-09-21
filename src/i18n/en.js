@@ -117,6 +117,7 @@ const en = {
         status_filter_locked: "Locked only",
         status_filter_deactivated_locked: "Deactivated and locked",
         user_id: "Search user",
+        email: "Email address", // watcha+
         displayname: "Displayname",
         password: "Password",
         avatar_url: "Avatar URL",
@@ -129,6 +130,7 @@ const en = {
         auth_provider: "Provider",
       },
       helper: {
+        optional_id: "Optional. Fill it in to pre-provision an account under the identifier its identity provider will give it, an LDAP directory for instance. Left empty, one is drawn at random.", // watcha+
         deactivate: "You must provide a password to re-activate an account.",
         lock: "Prevents the user from logging in without deleting their account.",
         erase: "Mark the user as GDPR-erased",

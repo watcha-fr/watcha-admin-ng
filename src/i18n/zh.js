@@ -121,6 +121,7 @@ const zh = {
         status_filter_locked: "仅已锁定",
         status_filter_deactivated_locked: "已禁用且已锁定",
         user_id: "搜索用户",
+        email: "电子邮件地址", // watcha+
         displayname: "显示名字",
         password: "密码",
         avatar_url: "头像 URL",
@@ -132,6 +133,7 @@ const zh = {
         consent_version: "协议版本",
       },
       helper: {
+        optional_id: "可选。填写它可以按身份提供者（例如 LDAP 目录）将赋予的标识符预先创建账户。留空则随机生成。", // watcha+
         deactivate: "您必须提供一串密码来激活账户。",
         lock: "阻止用户登录而不删除其账户。",
         erase: "将用户标记为根据 GDPR 的要求抹除了",

@@ -38,6 +38,7 @@ import {
   DeleteButton,
   SaveButton,
   maxLength,
+  email, // watcha+
   regex,
   required,
   useTranslate,
@@ -330,11 +331,27 @@ export const UserList = props => {
 // here only local part of user_id
 // maxLength = 255 - "@" - ":" - localStorage.getItem("home_server").length
 // localStorage.getItem("home_server").length is not valid here
+/* watcha!
 const validateUser = [
   required(),
   maxLength(253),
   regex(/^[a-z0-9._=\-/]+$/, "synapseadmin.users.invalid_user_id"),
 ];
+!watcha */
+// watcha+
+// L'identifiant devient facultatif : laissé vide, il est tiré au sort. Le
+// renseigner sert à préprovisionner un compte sous l'identifiant que son
+// fournisseur d'identité lui donnera, un annuaire LDAP par exemple, pour qu'il
+// existe avant la première connexion.
+const validateOptionalUser = [
+  maxLength(253),
+  regex(/^[a-z0-9._=\-/]+$/, "synapseadmin.users.invalid_user_id"),
+];
+
+// L'adresse est ce qui permet de créer le compte chez le fournisseur
+// d'identité et dans l'espace documentaire.
+const validateEmail = [required(), email(), maxLength(255)];
+// +watcha
 
 const validateAddress = [required(), maxLength(255)];
 
@@ -399,6 +416,7 @@ const UserEditToolbar = props => {
 export const UserCreate = props => (
   <Create {...props}>
     <SimpleForm>
+      {/* watcha! remplacé par les trois champs ci-dessous
       <TextInput source="id" autoComplete="off" validate={validateUser} />
       <TextInput source="displayname" validate={maxLength(256)} />
       <PasswordInput
@@ -406,6 +424,17 @@ export const UserCreate = props => (
         autoComplete="new-password"
         validate={maxLength(512)}
       />
+      !watcha */}
+      {/* watcha+ */}
+      <TextInput source="email" type="email" validate={validateEmail} />
+      <TextInput
+        source="id"
+        autoComplete="off"
+        validate={validateOptionalUser}
+        helperText="resources.users.helper.optional_id"
+      />
+      <TextInput source="displayname" validate={maxLength(256)} />
+      {/* +watcha */}
       <BooleanInput source="admin" />
       <ArrayInput source="threepids">
         <SimpleFormIterator disableReordering>
