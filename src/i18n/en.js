@@ -63,6 +63,8 @@ const en = {
         mode: {
           ignore: "Ignore IDs in CSV and create new ones",
           update: "Update existing records",
+          keycloak:
+            "Let the identity provider mint the identifier (the file's identifier becomes the Keycloak username)", // watcha+
         },
       },
       passwords: {

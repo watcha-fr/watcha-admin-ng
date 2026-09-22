@@ -46,6 +46,31 @@ const optionalFields = [
   "password",
 ].sort();
 
+// watcha+
+// Mode « keycloak » : c'est le fournisseur d'identité qui fabrique
+// l'identifiant Synapse, et l'identifiant du fichier devient le nom
+// d'utilisateur Keycloak. On retire donc `id`, ce qui aiguille le fournisseur
+// de données vers le hub plutôt que vers l'API d'administration.
+//
+// Les autres modes sont inchangés : une instance sans Keycloak, ou un
+// administrateur qui n'a pas choisi ce mode, garde exactement le comportement
+// d'avant.
+function forIdentityProvider(record, useridMode) {
+  if (useridMode !== "keycloak") {
+    return record;
+  }
+  const { id, localpart, ...rest } = record;
+  return {
+    ...rest,
+    keycloak_username: id,
+    // Retenu par Synapse seulement lorsque Keycloak n'est pas géré ; sinon
+    // l'UUID renvoyé par Keycloak l'emporte. C'est le serveur qui tranche,
+    // selon sa propre configuration, et la console n'a pas à la connaître.
+    localpart_id: localpart || id,
+  };
+}
+// +watcha
+
 function TranslatableOption({ value, text }) {
   const translate = useTranslate();
   return <option value={value}>{translate(text)}</option>;
@@ -324,7 +349,24 @@ const FilePicker = props => {
             "will check for existence of record " + JSON.stringify(userRecord)
           );
         let retries = 0;
-        const submitRecord = recordData => {
+        const submitRecord = async recordData => {
+          // watcha+
+          // En mode « keycloak », l'identifiant du fichier désigne un compte
+          // Keycloak, pas un compte Synapse : l'interroger ici ferait échouer
+          // des lignes parfaitement valides. L'identifiant Synapse n'existe pas
+          // encore, puisque c'est le fournisseur d'identité qui le fabrique —
+          // il n'y a donc rien à détecter. Une adresse déjà connue est traitée
+          // par le serveur, qui réactive le compte au lieu d'en créer un second.
+          if (useridMode === "keycloak") {
+            if (!dryRun) {
+              await dataProvider.create("users", {
+                data: forIdentityProvider(recordData, useridMode),
+              });
+            }
+            succeededRecords.push(recordData);
+            return;
+          }
+          // +watcha
           return dataProvider.getOne("users", { id: recordData.id }).then(
             async alreadyExists => {
               if (LOGGING) console.log("already existed");
@@ -491,6 +533,12 @@ const FilePicker = props => {
                   value="update"
                   text="import_users.cards.ids.mode.update"
                 />
+                {/* watcha+ */}
+                <TranslatableOption
+                  value="keycloak"
+                  text="import_users.cards.ids.mode.keycloak"
+                />
+                {/* +watcha */}
               </NativeSelect>
             </div>
           ) : (

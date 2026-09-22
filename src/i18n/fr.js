@@ -67,6 +67,8 @@ const fr = {
           ignore:
             "Ignorer les identifiants dans le ficher CSV et en créer de nouveaux",
           update: "Mettre à jour les enregistrements existants",
+          keycloak:
+            "Laisser le fournisseur d'identité fabriquer l'identifiant (l'identifiant du fichier devient le nom d'utilisateur Keycloak)", // watcha+
         },
       },
       passwords: {

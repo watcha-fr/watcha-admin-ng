@@ -68,6 +68,7 @@ const zh = {
         mode: {
           ignore: "忽略 CSV 中的 ID 并创建新的",
           update: "更新已经存在的记录",
+          keycloak: "由身份提供方生成标识符（文件中的标识符将作为 Keycloak 用户名）", // watcha+
         },
       },
       passwords: {

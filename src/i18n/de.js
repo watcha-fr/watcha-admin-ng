@@ -64,6 +64,8 @@ const de = {
         mode: {
           ignore: "Ignoriere IDs der CSV-Datei und erstelle neue",
           update: "Aktualisiere existierende Benutzer",
+          keycloak:
+            "Die Kennung vom Identitätsanbieter erzeugen lassen (die Kennung aus der Datei wird zum Keycloak-Benutzernamen)", // watcha+
         },
       },
       passwords: {
