@@ -95,7 +95,7 @@ const fr = {
         skipped: "%{smart_count} entrées ignorées",
         download_skipped: "Télécharger les entrées ignorées",
         with_error:
-        "%{smart_count} entrée avec des erreurs ||| %{smart_count} entrées avec des erreurs",
+          "%{smart_count} entrée avec des erreurs ||| %{smart_count} entrées avec des erreurs",
         simulated_only: "L'import était simulé",
       },
     },
@@ -137,9 +137,12 @@ const fr = {
         auth_provider: "Fournisseur d'identité",
       },
       helper: {
-        optional_id: "Facultatif. À renseigner pour préprovisionner un compte sous l'identifiant de son fournisseur d'identité, un annuaire LDAP par exemple. Laissé vide, l'identifiant est celui attribué par le fournisseur d'identité.", // watcha+
-        send_email: "Il porte le mot de passe du compte. Sans identifiant saisi, la personne se connecte avec ce mot de passe.", // watcha+
-        deactivate: "Vous devrez fournir un mot de passe pour réactiver le compte.",
+        optional_id:
+          "Facultatif. À renseigner pour préprovisionner un compte sous l'identifiant de son fournisseur d'identité, un annuaire LDAP par exemple. Laissé vide, l'identifiant est celui attribué par le fournisseur d'identité.", // watcha+
+        send_email:
+          "Il porte le mot de passe du compte. Sans identifiant saisi, la personne se connecte avec ce mot de passe.", // watcha+
+        deactivate:
+          "Empêche la connexion à la messagerie, à l'espace documentaire et à l'annuaire. Réversible : rien n'est supprimé, la personne retrouve tout en l'état.", // watcha+
         lock: "Empêche l'utilisateur de se connecter sans supprimer son compte.",
         erase: "Marquer l'utilisateur comme effacé conformément au RGPD",
       },
@@ -355,7 +358,8 @@ const fr = {
     room_directory: {
       name: "Répertoire des salons",
       fields: {
-        world_readable: "Tout utilisateur peut avoir un aperçu du salon, sans en devenir membre",
+        world_readable:
+          "Tout utilisateur peut avoir un aperçu du salon, sans en devenir membre",
         guest_can_join: "Les visiteurs peuvent rejoindre le salon",
       },
       action: {
@@ -381,7 +385,10 @@ const fr = {
       expiry_time: "Date d'expiration",
       length: "Longueur",
     },
-    helper: { length: "Longueur du jeton généré aléatoirement si aucun jeton n'est pas spécifié" },
+    helper: {
+      length:
+        "Longueur du jeton généré aléatoirement si aucun jeton n'est pas spécifié",
+    },
   },
   dashboard: {
     name: "Tableau de bord",

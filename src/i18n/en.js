@@ -133,9 +133,12 @@ const en = {
         auth_provider: "Provider",
       },
       helper: {
-        optional_id: "Optional. Fill it in to pre-provision an account under the identifier its identity provider will give it, an LDAP directory for instance. Left empty, the identifier is the one the identity provider assigns.", // watcha+
-        send_email: "It carries the account password. With no identifier given, the person signs in with that password.", // watcha+
-        deactivate: "You must provide a password to re-activate an account.",
+        optional_id:
+          "Optional. Fill it in to pre-provision an account under the identifier its identity provider will give it, an LDAP directory for instance. Left empty, the identifier is the one the identity provider assigns.", // watcha+
+        send_email:
+          "It carries the account password. With no identifier given, the person signs in with that password.", // watcha+
+        deactivate:
+          "Blocks sign-in to the messaging, the document space and the directory. Reversible: nothing is deleted, the person gets everything back as it was.", // watcha+
         lock: "Prevents the user from logging in without deleting their account.",
         erase: "Mark the user as GDPR-erased",
       },

@@ -518,6 +518,7 @@ export const UserEdit = props => {
           <TextInput source="displayname" />
           <PasswordInput source="password" autoComplete="new-password" />
           <BooleanInput source="admin" />
+          {/* watcha!
           <BooleanInput
             source="locked"
             helperText="resources.users.helper.lock"
@@ -526,6 +527,23 @@ export const UserEdit = props => {
             source="deactivated"
             helperText="resources.users.helper.deactivate"
           />
+          !watcha */}
+          {/* watcha+
+              Un seul interrupteur, sur le verrou. Désactiver un compte Synapse
+              le sort de tous ses salons et efface son adresse, son mot de passe
+              et ses appareils, sans que rien ne les lui rende au retour — ce
+              n'est pas une suspension, c'est une amputation. Le verrou refuse la
+              connexion et se lève sans rien avoir à reconstruire.
+
+              L'étiquette reste « Désactivé » : c'est le mot que l'administrateur
+              emploie, et le geste qu'il attend. La désactivation Synapse ne
+              subsiste que derrière « Effacer les données de l'utilisateur ». */}
+          <BooleanInput
+            source="locked"
+            label="resources.users.fields.deactivated"
+            helperText="resources.users.helper.deactivate"
+          />
+          {/* +watcha */}
           <DateField source="creation_ts_ms" showTime options={date_format} />
           <TextField source="consent_version" />
         </FormTab>

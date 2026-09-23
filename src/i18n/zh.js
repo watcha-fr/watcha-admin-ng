@@ -68,7 +68,8 @@ const zh = {
         mode: {
           ignore: "忽略 CSV 中的 ID 并创建新的",
           update: "更新已经存在的记录",
-          keycloak: "由身份提供方生成标识符（文件中的标识符将作为 Keycloak 用户名）", // watcha+
+          keycloak:
+            "由身份提供方生成标识符（文件中的标识符将作为 Keycloak 用户名）", // watcha+
         },
       },
       passwords: {
@@ -135,9 +136,11 @@ const zh = {
         consent_version: "协议版本",
       },
       helper: {
-        optional_id: "可选。填写它可以按身份提供者（例如 LDAP 目录）将赋予的标识符预先创建账户。留空则使用身份提供者分配的标识符。", // watcha+
+        optional_id:
+          "可选。填写它可以按身份提供者（例如 LDAP 目录）将赋予的标识符预先创建账户。留空则使用身份提供者分配的标识符。", // watcha+
         send_email: "邮件包含账户密码。未填写标识符时，用户使用该密码登录。", // watcha+
-        deactivate: "您必须提供一串密码来激活账户。",
+        deactivate:
+          "阻止登录消息服务、文档空间和目录。可逆：不删除任何内容，用户可原样恢复。", // watcha+
         lock: "阻止用户登录而不删除其账户。",
         erase: "将用户标记为根据 GDPR 的要求抹除了",
       },

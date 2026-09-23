@@ -389,8 +389,7 @@ const dataProvider = {
       valid,
     } = params.filter;
     const deactivated_only =
-      status_filter === "deactivated" ||
-      status_filter === "deactivated_locked";
+      status_filter === "deactivated" || status_filter === "deactivated_locked";
     const locked_only =
       status_filter === "locked" || status_filter === "deactivated_locked";
     const { page, perPage } = params.pagination;
@@ -518,9 +517,20 @@ const dataProvider = {
 
     const res = resourceMap[resource];
     const endpoint_url = homeserver + res.path;
+    // watcha+
+    // Le formulaire renvoie l'enregistrement entier, `deactivated` compris.
+    // Synapse refuse en 400 une requête portant `deactivated` et `locked` tous
+    // deux vrais, et le champ n'est plus modifiable ici : le laisser passer
+    // ferait échouer le verrouillage d'un compte déjà désactivé, sans rien
+    // apporter. On l'écarte, ce qui laisse l'état tel qu'il est côté serveur.
+    const body =
+      resource === "users"
+        ? (({ deactivated, ...reste }) => reste)(params.data)
+        : params.data;
+    // +watcha
     return jsonClient(`${endpoint_url}/${encodeURIComponent(params.data.id)}`, {
       method: "PUT",
-      body: JSON.stringify(params.data, filterNullValues),
+      body: JSON.stringify(body, filterNullValues), // watcha+ (était params.data)
     }).then(({ json }) => ({ data: res.map(json) }));
   },
 
