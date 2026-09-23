@@ -439,12 +439,20 @@ export const UserCreate = props => (
           pour un compte ordinaire. Un compte préprovisionné sous l'identifiant
           d'un annuaire se connecte par son fournisseur d'identité, sans mot de
           passe à recevoir — la case disparaît donc dès qu'un identifiant est
-          saisi, plutôt que de rester là sans effet. */}
+          saisi, plutôt que de rester là sans effet.
+
+          `resource` est passé à la main : `SimpleForm` ne l'injecte que dans
+          ses enfants directs, et cet input naît dans le rendu de
+          `FormDataConsumer`. Sans lui, react-admin ne résout pas
+          `resources.users.fields.send_email` et affiche le nom du champ
+          humanisé, « Send email », alors que le texte d'aide — passé en clé
+          complète — sortait bien traduit. */}
       <FormDataConsumer>
         {({ formData }) =>
           !formData.id && (
             <BooleanInput
               source="send_email"
+              resource="users"
               defaultValue={true}
               helperText="resources.users.helper.send_email"
             />
