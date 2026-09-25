@@ -135,7 +135,7 @@ const de = {
       },
       helper: {
         optional_id:
-          "Optional. Auszufüllen, um ein Konto unter der Kennung seines Identitätsanbieters vorab anzulegen, etwa eines LDAP-Verzeichnisses. Leer gelassen, wird die vom Identitätsanbieter vergebene Kennung verwendet.", // watcha+
+          "Optional. Auszufüllen, wenn das Konto im Verzeichnis bereits besteht: es wird unter dieser Kennung im Messenger und im Dokumentenbereich angelegt. Leer gelassen, wird das Konto in allen dreien angelegt und das Verzeichnis vergibt die Kennung.", // watcha+
         send_email:
           "Sie enthält das Kontopasswort. Ohne angegebene Kennung meldet sich die Person mit diesem Passwort an.", // watcha+
         deactivate:

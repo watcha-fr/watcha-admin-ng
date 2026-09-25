@@ -134,7 +134,7 @@ const en = {
       },
       helper: {
         optional_id:
-          "Optional. Fill it in to pre-provision an account under the identifier its identity provider will give it, an LDAP directory for instance. Left empty, the identifier is the one the identity provider assigns.", // watcha+
+          "Optional. Fill it in if the account already exists in the directory: it will be created in the messaging and the document space under this identifier. Left empty, the account is created in all three, and the directory assigns its identifier.", // watcha+
         send_email:
           "It carries the account password. With no identifier given, the person signs in with that password.", // watcha+
         deactivate:

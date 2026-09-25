@@ -138,7 +138,7 @@ const fr = {
       },
       helper: {
         optional_id:
-          "Facultatif. À renseigner pour préprovisionner un compte sous l'identifiant de son fournisseur d'identité, un annuaire LDAP par exemple. Laissé vide, l'identifiant est celui attribué par le fournisseur d'identité.", // watcha+
+          "Facultatif. À renseigner si le compte existe déjà dans l'annuaire : il sera créé dans la messagerie et l'espace documentaire sous cet identifiant. Laissé vide, le compte est créé dans les trois, et l'annuaire lui attribue son identifiant.", // watcha+
         send_email:
           "Il porte le mot de passe du compte. Sans identifiant saisi, la personne se connecte avec ce mot de passe.", // watcha+
         deactivate:

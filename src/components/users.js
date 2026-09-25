@@ -436,10 +436,10 @@ export const UserCreate = props => (
       />
       <TextInput source="displayname" validate={maxLength(256)} />
       {/* Le courriel de bienvenue porte le mot de passe : il n'a de sens que
-          pour un compte ordinaire. Un compte préprovisionné sous l'identifiant
-          d'un annuaire se connecte par son fournisseur d'identité, sans mot de
-          passe à recevoir — la case disparaît donc dès qu'un identifiant est
-          saisi, plutôt que de rester là sans effet.
+          pour un compte ordinaire. Renseigner un identifiant sert à rattacher
+          un compte qui existe déjà chez le fournisseur d'identité — la personne
+          a donc déjà ses identifiants, et il n'y a rien à lui annoncer. La case
+          disparaît, plutôt que de rester là sans effet.
 
           `resource` est passé à la main : `SimpleForm` ne l'injecte que dans
           ses enfants directs, et cet input naît dans le rendu de
