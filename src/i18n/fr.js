@@ -144,6 +144,8 @@ const fr = {
         deactivate:
           "Empêche la connexion à la messagerie, à l'espace documentaire et à l'annuaire. Réversible : rien n'est supprimé, la personne retrouve tout en l'état.", // watcha+
         lock: "Empêche l'utilisateur de se connecter sans supprimer son compte.",
+        erase_title:
+          "Supprimer l'utilisateur |||| Supprimer %{smart_count} utilisateurs", // watcha+
         erase:
           "Êtes-vous sûr de vouloir supprimer l'utilisateur et ses dossiers (si Nextcloud est activé) ? |||| Êtes-vous sûr de vouloir supprimer ces %{smart_count} utilisateurs et leurs dossiers (si Nextcloud est activé) ?", // watcha!
       },

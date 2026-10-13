@@ -140,6 +140,7 @@ const en = {
         deactivate:
           "Blocks sign-in to the messaging, the document space and the directory. Reversible: nothing is deleted, the person gets everything back as it was.", // watcha+
         lock: "Prevents the user from logging in without deleting their account.",
+        erase_title: "Delete user |||| Delete %{smart_count} users", // watcha+
         erase: "Mark the user as GDPR-erased",
       },
       action: {

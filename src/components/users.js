@@ -282,7 +282,8 @@ const UserBulkActionButtons = props => (
     <BulkDeleteButton
       {...props}
       label="resources.users.action.erase"
-      confirmTitle="resources.users.helper.erase"
+      confirmTitle="resources.users.helper.erase_title" // watcha!
+      confirmContent="resources.users.helper.erase" // watcha+
       mutationMode="pessimistic"
     />
   </Fragment>
@@ -404,9 +405,14 @@ const UserEditToolbar = props => {
       <SaveButton submitOnEnter={true} disabled={props.pristine} />
       <DeleteButton
         label="resources.users.action.erase"
-        confirmTitle={translate("resources.users.helper.erase", {
+        // watcha!
+        confirmTitle={translate("resources.users.helper.erase_title", {
           smart_count: 1,
         })}
+        confirmContent={translate("resources.users.helper.erase", {
+          smart_count: 1,
+        })}
+        // !watcha
         mutationMode="pessimistic"
       />
       <ServerNoticeButton />

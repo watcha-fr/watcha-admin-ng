@@ -141,6 +141,7 @@ const de = {
         deactivate:
           "Verhindert die Anmeldung an Messenger, Dokumentenbereich und Verzeichnis. Umkehrbar: nichts wird gelöscht, die Person findet alles unverändert wieder.", // watcha+
         lock: "Verhindert die Anmeldung des Benutzers, ohne sein Konto zu löschen.",
+        erase_title: "Benutzer löschen |||| %{smart_count} Benutzer löschen", // watcha+
         erase: "DSGVO konformes Löschen der Benutzerdaten",
       },
       action: {

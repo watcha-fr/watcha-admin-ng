@@ -142,6 +142,7 @@ const zh = {
         deactivate:
           "阻止登录消息服务、文档空间和目录。可逆：不删除任何内容，用户可原样恢复。", // watcha+
         lock: "阻止用户登录而不删除其账户。",
+        erase_title: "删除用户", // watcha+
         erase: "将用户标记为根据 GDPR 的要求抹除了",
       },
       action: {
