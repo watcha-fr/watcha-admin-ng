@@ -331,7 +331,9 @@ export const UserList = props => {
         />
       </Datagrid>
       !watcha */}
-      <UserDatagrid avatarClassName={classes.small} /> {/* watcha+ */}
+      {/* watcha+ */}
+      <UserDatagrid avatarClassName={classes.small} />
+      {/* +watcha */}
     </List>
   );
 };
