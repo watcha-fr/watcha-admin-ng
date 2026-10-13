@@ -50,6 +50,7 @@ import {
   sanitizeListRestProps,
   NumberField,
   downloadCSV,
+  useListContext, // watcha+
 } from "react-admin";
 import { useForm, useFormState } from "react-final-form";
 import { Link } from "react-router-dom";
@@ -145,6 +146,9 @@ const exporter = async (users, fetchRelatedRecords, dataProvider) => {
         "email",
         "domain",
         "is_guest",
+        // watcha+
+        ...(users.some(user => "is_partner" in user) ? ["is_partner"] : []),
+        // +watcha
         "admin",
         "locked",
         "deactivated",
@@ -306,6 +310,7 @@ export const UserList = props => {
       pagination={<UserPagination />}
       exporter={exporter}
     >
+      {/* watcha! remplacé par UserDatagrid, qui ajoute le statut partenaire
       <Datagrid rowClick="edit">
         <AvatarField
           source="avatar_src"
@@ -325,9 +330,49 @@ export const UserList = props => {
           options={date_format}
         />
       </Datagrid>
+      !watcha */}
+      <UserDatagrid avatarClassName={classes.small} /> {/* watcha+ */}
     </List>
   );
 };
+
+// watcha+
+// Le statut partenaire prend la place de « Visiteur », qui ne sert pas chez
+// nous. Un Synapse qui ne l'envoie pas encore garde l'ancienne colonne : la
+// console est commune à toutes les instances, toutes ne sont pas à jour.
+// Synapse ne sait pas trier sur ce champ, d'où `sortable={false}`.
+const hasPartnerStatus = ({ ids, data }) =>
+  ids.some(id => data[id] && "is_partner" in data[id]);
+
+const UserDatagrid = ({ avatarClassName, ...props }) => {
+  const listContext = useListContext(props);
+  return (
+    <Datagrid rowClick="edit" {...props}>
+      <AvatarField
+        source="avatar_src"
+        className={avatarClassName}
+        sortBy="avatar_url"
+      />
+      <TextField source="id" sortBy="name" />
+      <TextField source="displayname" />
+      {hasPartnerStatus(listContext) ? (
+        <BooleanField source="is_partner" sortable={false} />
+      ) : (
+        <BooleanField source="is_guest" />
+      )}
+      <BooleanField source="admin" />
+      <BooleanField source="locked" />
+      <BooleanField source="deactivated" />
+      <DateField
+        source="creation_ts"
+        label="resources.users.fields.creation_ts_ms"
+        showTime
+        options={date_format}
+      />
+    </Datagrid>
+  );
+};
+// +watcha
 
 // https://matrix.org/docs/spec/appendices#user-identifiers
 // here only local part of user_id

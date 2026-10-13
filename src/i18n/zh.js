@@ -111,6 +111,7 @@ const zh = {
         id: "用户 ID",
         name: "用户名",
         is_guest: "访客",
+        is_partner: "合作伙伴", // watcha+
         admin: "服务器管理员",
         deactivated: "被禁用",
         locked: "已锁定",

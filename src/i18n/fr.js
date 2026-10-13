@@ -111,6 +111,7 @@ const fr = {
         id: "Identifiant",
         name: "Nom",
         is_guest: "Visiteur",
+        is_partner: "Partenaire", // watcha+
         admin: "Administrateur du serveur",
         deactivated: "Désactivé",
         locked: "Verrouillé",

@@ -107,6 +107,7 @@ const en = {
         id: "User-ID",
         name: "Name",
         is_guest: "Guest",
+        is_partner: "Partner", // watcha+
         admin: "Server Administrator",
         deactivated: "Deactivated",
         locked: "Locked",

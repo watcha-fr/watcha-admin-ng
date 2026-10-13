@@ -108,6 +108,7 @@ const de = {
         id: "Benutzer-ID",
         name: "Name",
         is_guest: "Gast",
+        is_partner: "Partner", // watcha+
         admin: "Server Administrator",
         deactivated: "Deaktiviert",
         locked: "Gesperrt",
