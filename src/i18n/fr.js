@@ -144,10 +144,11 @@ const fr = {
         deactivate:
           "Empêche la connexion à la messagerie, à l'espace documentaire et à l'annuaire. Réversible : rien n'est supprimé, la personne retrouve tout en l'état.", // watcha+
         lock: "Empêche l'utilisateur de se connecter sans supprimer son compte.",
-        erase: "Marquer l'utilisateur comme effacé conformément au RGPD",
+        erase:
+          "Êtes-vous sûr de vouloir supprimer l'utilisateur et ses dossiers (si Nextcloud est activé) ? |||| Êtes-vous sûr de vouloir supprimer ces %{smart_count} utilisateurs et leurs dossiers (si Nextcloud est activé) ?", // watcha!
       },
       action: {
-        erase: "Effacer les données de l'utilisateur",
+        erase: "Supprimer l'utilisateur", // watcha!
       },
     },
     rooms: {

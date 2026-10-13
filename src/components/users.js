@@ -537,7 +537,7 @@ export const UserEdit = props => {
 
               L'étiquette reste « Désactivé » : c'est le mot que l'administrateur
               emploie, et le geste qu'il attend. La désactivation Synapse ne
-              subsiste que derrière « Effacer les données de l'utilisateur ». */}
+              subsiste que derrière « Supprimer l'utilisateur ». */}
           <BooleanInput
             source="locked"
             label="resources.users.fields.deactivated"
