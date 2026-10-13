@@ -149,6 +149,12 @@ const zh = {
       action: {
         erase: "抹除用户信息",
       },
+      // watcha+
+      errors: {
+        already_exists:
+          "该地址已有账户（可能已停用）。请在用户列表中找到并编辑它。",
+      },
+      // +watcha
     },
     rooms: {
       name: "房间",

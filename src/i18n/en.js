@@ -147,6 +147,12 @@ const en = {
       action: {
         erase: "Erase user data",
       },
+      // watcha+
+      errors: {
+        already_exists:
+          "An account already exists for this address, possibly deactivated. Find it in the user list to edit it.",
+      },
+      // +watcha
     },
     rooms: {
       name: "Room |||| Rooms",

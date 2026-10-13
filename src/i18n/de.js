@@ -148,6 +148,12 @@ const de = {
       action: {
         erase: "Lösche Benutzerdaten",
       },
+      // watcha+
+      errors: {
+        already_exists:
+          "Für diese Adresse besteht bereits ein Konto, möglicherweise deaktiviert. Suchen Sie es in der Benutzerliste, um es zu bearbeiten.",
+      },
+      // +watcha
     },
     rooms: {
       name: "Raum |||| Räume",

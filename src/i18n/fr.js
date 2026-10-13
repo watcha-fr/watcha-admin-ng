@@ -153,6 +153,12 @@ const fr = {
       action: {
         erase: "Supprimer l'utilisateur", // watcha!
       },
+      // watcha+
+      errors: {
+        already_exists:
+          "Un compte existe déjà pour cette adresse, peut-être désactivé. Retrouvez-le dans la liste des utilisateurs pour le modifier.",
+      },
+      // +watcha
     },
     rooms: {
       name: "Salon |||| Salons",

@@ -1,4 +1,4 @@
-import { fetchUtils } from "react-admin";
+import { fetchUtils, HttpError } from "react-admin"; // watcha+ (était { fetchUtils })
 import { stringify } from "query-string";
 import { accountHistoryGetList } from "../components/AccountHistory";
 
@@ -45,6 +45,19 @@ const emailAsThreepid = data => {
       ? threepids
       : [{ medium: "email", address: email }, ...threepids],
   };
+};
+
+// Synapse range son message dans `error`, que react-admin ne lit pas : la
+// notification n'affiche alors que le statut HTTP, « Bad Request ». Les cas
+// connus reçoivent une clé de traduction, les autres restent tels quels.
+const userCreateErrors = {
+  M_USER_IN_USE: "resources.users.errors.already_exists",
+};
+
+const explainUserCreateError = error => {
+  const key = error.body && userCreateErrors[error.body.errcode];
+  if (!key) throw error;
+  throw new HttpError(key, error.status, error.body);
 };
 // +watcha
 
@@ -607,7 +620,12 @@ const dataProvider = {
       // watcha+
       // Une création peut répondre autre chose qu'un enregistrement complet :
       // le descripteur fournit alors sa propre lecture de la réponse.
-    }).then(({ json }) => ({ data: (create.map || res.map)(json) }));
+    })
+      .then(({ json }) => ({ data: (create.map || res.map)(json) }))
+      .catch(error => {
+        if (resource !== "users") throw error;
+        explainUserCreateError(error);
+      });
     // +watcha
   },
 
